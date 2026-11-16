@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DM's Table — Soundboard · NPC Generator · 5.5e Tables</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-dice">⚄</span>
+    <div>
+      <h1>DM's Table</h1>
+      <p class="tagline">A dashboard for the dungeon master</p>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" role="tab" aria-selected="true" data-tab="soundboard">🔊 Soundboard</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="npc">🎭 NPC Generator</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="tables">📜 DM Tables (5.5e)</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ SOUNDBOARD ============ -->
+  <section id="tab-soundboard" class="tab-panel active" role="tabpanel">
+    <div class="soundboard-layout">
+      <aside class="sound-side">
+        <h2>Master</h2>
+        <div class="master-slider-wrap">
+          <div id="master-slider" class="vslider vslider-master" tabindex="0" role="slider"
+               aria-label="Master volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"></div>
+          <span id="master-val" class="slider-val">80%</span>
+        </div>
+        <button id="mute-all" class="btn btn-danger">Mute All</button>
+
+        <h2>Presets</h2>
+        <div class="preset-save-row">
+          <input id="preset-name" type="text" maxlength="40" placeholder="Preset name…">
+          <button id="preset-save" class="btn btn-gold">Save</button>
+        </div>
+        <div id="preset-list" class="preset-list"></div>
+      </aside>
+
+      <div class="sound-main">
+        <p class="hint">All audio is synthesized live in your browser (Web Audio) — no files needed. Tap a channel's button to start it, then drag its <strong>vertical slider</strong> to mix. Save your mixes as presets.</p>
+        <div id="channel-grid" class="channel-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NPC GENERATOR ============ -->
+  <section id="tab-npc" class="tab-panel" role="tabpanel">
+    <div class="npc-layout">
+      <aside class="npc-controls">
+        <h2>Generator</h2>
+        <label>Species (2024 PHB)
+          <select id="npc-species"></select>
+        </label>
+        <label id="lineage-wrap">Lineage / Ancestry
+          <select id="npc-lineage"></select>
+        </label>
+        <label>Sex
+          <select id="npc-sex">
+            <option value="random">Random</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="nonbinary">Nonbinary</option>
+          </select>
+        </label>
+        <div class="btn-row">
+          <button id="npc-generate" class="btn btn-gold btn-big">🎲 Generate NPC</button>
+        </div>
+        <div class="btn-row">
+          <button id="npc-reroll-name" class="btn">Reroll name</button>
+          <button id="npc-save" class="btn btn-gold">💾 Save NPC</button>
+        </div>
+
+        <h2>Saved NPCs <span id="npc-count" class="pill">0</span></h2>
+        <div class="btn-row">
+          <button id="npc-export" class="btn btn-small">Export JSON</button>
+          <label class="btn btn-small btn-file">Import JSON<input id="npc-import" type="file" accept="application/json,.json" hidden></label>
+        </div>
+        <div id="npc-roster" class="roster"></div>
+      </aside>
+
+      <div class="npc-card-wrap">
+        <article id="npc-card" class="npc-card">
+          <header class="npc-card-head">
+            <h2 id="npc-name">—</h2>
+            <span id="npc-species-lineage" class="pill pill-species">—</span>
+          </header>
+          <dl class="npc-stats">
+            <div><dt>Sex</dt><dd id="npc-sex-out">—</dd></div>
+            <div><dt>Height</dt><dd id="npc-height">—</dd></div>
+            <div><dt>Weight</dt><dd id="npc-weight">—</dd></div>
+          </dl>
+          <h3>Distinguishing features</h3>
+          <ul id="npc-features" class="features"><li class="muted">—</li></ul>
+          <label class="notes-label">DM notes
+            <textarea id="npc-notes" rows="4" placeholder="Personality, voice, hook, where the party met them…"></textarea>
+          </label>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TABLES ============ -->
+  <section id="tab-tables" class="tab-panel" role="tabpanel">
+    <div class="tables-head">
+      <p class="hint">Quick reference for the <strong>2024 rules (5.5e)</strong>. Type to filter the cards.</p>
+      <input id="tables-filter" type="search" placeholder="Filter tables… (e.g. exhaustion, cover, XP)">
+    </div>
+    <div id="tables-grid" class="tables-grid"></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>DM's Table · runs fully offline in your browser · presets &amp; NPCs are stored locally (localStorage). Rules reference: 2024 Player's Handbook / DMG / SRD 5.2.</p>
+</footer>
+
+<script src="js/data.js" defer></script>
+<script src="js/soundboard.js" defer></script>
+<script src="js/npc.js" defer></script>
+<script src="js/tables.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
