@@ -115,9 +115,12 @@
   }
 
   function buildCard(t) {
-    const card = el("article", "table-card");
-    card.dataset.search = (t.title + " " + t.note + " " + t.rows.map((r) => Array.isArray(r) ? r.join(" ") : String(r)).join(" ")).toLowerCase();
-    card.appendChild(el("h3", null, t.title));
+    const card = el("details", "table-card");
+    card.open = true;
+    card.dataset.search = (t.title + " " + (t.note || "") + " " + t.rows.map((r) => Array.isArray(r) ? r.join(" ") : String(r)).join(" ")).toLowerCase();
+    const summary = el("summary", "table-summary");
+    summary.appendChild(el("h3", null, t.title));
+    card.appendChild(summary);
     if (t.note) card.appendChild(el("p", "card-note", t.note));
     switch (t.type) {
       case "table": buildTable(card, t); break;

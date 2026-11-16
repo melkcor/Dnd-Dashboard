@@ -345,5 +345,157 @@
     }
   ];
 
-  window.DM_DATA = { SPECIES, GENERIC_FEATURES, TABLES, LEVELS };
+  /* ---------- extended name pools (appended to the base pools above) ---------- */
+  const EXTRA_NAMES = {
+    human: {
+      m: ["Alaric", "Bertram", "Caspian", "Dorian", "Emeric", "Florian", "Godric", "Leofric", "Sten", "Wystan"],
+      f: ["Ancel", "Beatrix", "Cerys", "Drusilla", "Elowen", "Honora", "Magda", "Petra", "Sabine", "Thomasin"],
+      u: ["Avery", "Blair", "Cleo", "Dorian", "Ember", "Harper", "Ivo", "Jory", "Kiran", "Lark"],
+      s: ["Amberly", "Duskmere", "Falconer", "Grimsbane", "Holloway", "Marsh", "Sterling", "Thorne"]
+    },
+    elf: {
+      m: ["Alaric", "Caelum?", "Eldrin?", "Faelan", "Galanduil", "Ithilion", "Lomien", "Nimrodel?", "Orophin", "Seldarine?"],
+      f: ["Aerin", "Calenath", "Elanor", "Faerliss", "Ilenya", "Lathariel", "Mirelith", "Naiadra", "Sylaselle", "Thessaly?"],
+      u: ["Aelion", "Bryn", "Caelum?", "Elianor", "Faelar?", "Galendir", "Irien", "Laeroth", "Sylvaris", "Thalorin"],
+      s: ["Evenstar", "Greywind", "Moonwhisper", "Nightbloom", "Silverleaf", "Starfall", "Thistledown?", "Winterbourne"]
+    },
+    dwarf: {
+      m: ["Baldin", "Duncan", "Fili", "Gorm", "Hakon", "Ingun", "Kazrik", "Mordin", "Rorik", "Thrain?"],
+      f: ["Alfhild", "Brynja", "Dagny", "Eira", "Freydis", "Grimhild", "Hrefna", "Sigrid", "Torva", "Yrsa?"],
+      u: ["Bragi", "Egil", "Gunnar", "Hervor", "Kjell", "Leif", "Njord", "Orm", "Stenbjorn", "Trym"],
+      s: ["Anvilheart", "Deepdelver", "Emberstone", "Gateguard", "Hoarfrost", "Kingsbane", "Oathkeeper", "Rivetshield"]
+    },
+    gnome: {
+      m: ["Albin", "Cedric?", "Dumble", "Ellery", "Fennick", "Garrick?", "Hobnob", "Jasper?", "Milo", "Osgood"],
+      f: ["Bibiana", "Clover", "Dot", "Edda?", "Fenella", "Gilda", "Hetty", "Luella", "Mopsy", "Nerissa"],
+      u: ["Bamble", "Crumpet", "Fidget", "Galley", "Jinx", "Knick", "Puddle", "Snicker", "Tumble", "Widdershins"],
+      s: ["Bouncebrook", "Cogsworth?", "Dazzlewick", "Fumbleton", "Glimmerwick", "Jingleheim", "Poppleton", "Whistlewick"]
+    },
+    halfling: {
+      m: ["Aldous", "Bramwell", "Cedric?", "Derrick", "Elmo", "Hamfast", "Jonquil", "Merry?", "Osgood?", "Perry"],
+      f: ["Amabel", "Belinda", "Cecily", "Daisy", "Emmeline", "Flora", "Gill", "Poppy?", "Primrose", "Tansy?"],
+      u: ["Bertie", "Cob", "Dobbin", "Fenny", "Hobson", "Merty", "Noll?", "Peony", "Reed", "Sorrel?"],
+      s: ["Bramblefoot", "Cottonburrow", "Dewberry", "Foxglove", "Hazelnut", "Millrace", "Rumblesack", "Thornberry"]
+    },
+    orc: {
+      m: ["Arzok", "Brakha?", "Drazh", "Ghash", "Krognak", "Mulgath", "Rashk", "Skullcrusher?", "Thrag", "Urzul"],
+      f: ["Azuga", "Draka?", "Ghashka", "Morgha", "Nazgha", "Rugha", "Shaka", "Urzula", "Vrogga", "Yashka"],
+      u: ["Ashka", "Brakk", "Druz", "Gromm", "Krash", "Lugga", "Murg", "Razz", "Snag", "Throk?"],
+      s: ["Bonepicker", "Carrioncrow", "Doomfang", "Gorehoof", "Ironsnout", "Skulldrinker", "Warboar", "Wolfsbane"]
+    },
+    goliath: {
+      m: ["Aethelgard", "Bjorn?", "Drenko", "Hakon?", "Kaelum", "Lorik", "Mavrek", "Norgath", "Stenvar", "Thorvald"],
+      f: ["Astrid", "Brynhild?", "Dagny?", "Eira?", "Freya?", "Grimhild?", "Hilda?", "Kara", "Signe", "Yrsa?"],
+      u: ["Alrek", "Bjorn?", "Dain?", "Eirik", "Frosti", "Gunnar?", "Hakoni", "Kettil", "Leif?", "Stygg"],
+      s: ["Boulderheart", "Frostheim", "Glacierborn", "Ironheel", "Peakwalker", "Skycleaver", "Stormborn", "Thundertread"]
+    },
+    dragonborn: {
+      m: ["Abaeus", "Caeldrath", "Ghelnar", "Kriv?", "Mezar", "Othor", "Pandjed?", "Rhesk", "Sorz", "Torinn"],
+      f: ["Akra?", "Beshka", " Daar?", "Harann?", "Jhelan", "Kessek", "Medesha", "Nadia?", "Ovrun", "Shava"],
+      u: ["Azer", "Blaze", "Cinder?", "Draco?", "Fume", "Gale?", "Ignis", "Pyro", "Smoke", "Volt"],
+      s: ["Ashwhisper", "Dragonbane?", "Embermaw", "Firescale", "Goldforge", "Scalewarden", "Stormfang", "Wyrmheart"]
+    },
+    tiefling: {
+      m: ["Baalzeb?", "Corvin?", "Drazhem", "Iricular", "Jareth", "Kel'thas?", "Malachar", "Nero", "Oghma?", "Vexis"],
+      f: ["Amethyst?", "Caelindra?", "Duskana", "Hellene", "Ilyra", "Jezebel?", "Kaelindra?", "Morriga", "Nyxara", "Seraphine?"],
+      u: ["Ashka?", "Brume", "Cinder?", "Duskmere?", "Ember?", "Haze?", "Murk", "Rime", "Shade?", "Smolder"],
+      s: ["Ashenfall", "Brimstone", "Darkhollow", "Gloomveil", "Hellfire", "Nightshade?", "Shadowmere", "Soulfrost"]
+    },
+    aasimar: {
+      m: ["Alaric?", "Balthazar", "Cassian", "Dorian?", "Ezekiel", "Gabriel?", "Israfel", "Jorah", "Michael?", "Phoebus"],
+      f: ["Angelic?", "Aurelia?", "Celestine", "Elara?", "Gabrielle", "Hope", "Ivory", "Lucia", "Seraphine?", "Valora"],
+      u: ["Aeryll", "Dawn", "Elian?", "Glory", "Lumiel", "Morning", "Radiant", "Solara", "Starling", "Vesprine"],
+      s: ["Brightshield", "Dawnborn", "Goldensong", "Holyhelm", "Lightwarden", "Sunsworn", "Trueheart", "Wingfeather"]
+    }
+  };
+  for (const s of SPECIES) {
+    const x = EXTRA_NAMES[s.id];
+    if (!x) continue;
+    for (const k of ["m", "f", "u"]) {
+      const extra = x[k].filter((n) => !n.endsWith("?") && !s.names[k].includes(n));
+      s.names[k] = s.names[k].concat(extra);
+    }
+    s.surnames = s.surnames.concat(x.s.filter((n) => !n.endsWith("?") && !s.surnames.includes(n)));
+  }
+
+  /* ---------- more distinguishing features ---------- */
+  const MORE_FEATURES = [
+    "A ring on every finger", "A belt pouch that jingles with coins", "A faded map tucked in a boot",
+    "A locket with a tiny painted portrait", "A chipped monocle on a chain", "Gloves with the fingers cut off",
+    "A belt with an empty scabbard", "A pouch of strange-smelling herbs", "A wooden holy symbol on a cord",
+    "A small mirror they check often", "A dented flask in a coat pocket", "Keys on a chain around the neck",
+    "A torn wanted poster with their face scratched out", "A lucky coin they flip constantly",
+    "A quill tucked behind the ear", "A small drum or flute at the hip", "Boots resoled many times",
+    "A cloak lined with many hidden pockets", "A ring that doesn't fit any finger", "A toothpick worn behind the ear",
+    "Ink stains on every fingertip", "A cracked hand mirror", "A braid tied with a dead man's hair",
+    "Earrings made of monster teeth", "A tattoo that moves when they lie", "A birthmark shaped like a star",
+    "Eyes that reflect light like a cat's", "A habit of counting things aloud", "Always chews on a reed or straw",
+    "A voice that drops to a whisper for secrets", "Fingers stained with pipe tar", "A scar shaped like a handprint",
+    "A missing eyebrow (burned off)", "Ears pierced with small hoops", "A pendant that is warm to the touch",
+    "A laugh that sounds like breaking glass", "A limp that comes and goes", "Always smells of rain",
+    "A shadow that falls the wrong way", "Talks to their weapon", "Collects buttons in a pouch",
+    "A belt made of linked coins", "One boot a different color", "A tooth filed into a point",
+    "Freckles only on one cheek", "Hair that stands up no matter what", "A cane with a hidden blade",
+    "A ring of mushrooms growing around their boot", "A scar in the shape of a letter", "Wears a veil even indoors",
+    "A habit of saluting strangers", "A coin from a foreign land on a string", "Knuckles tattooed with numbers",
+    "A small bell sewn into a sleeve", "Eyes that water in the wind", "A birthmark shaped like an arrow",
+    "Always barefoot indoors", "A pouch of dice, always loaded?", "A cloak clasp shaped like a skull",
+    "A voice that echoes slightly", "A habit of snapping fingers when nervous", "A gold tooth in the back",
+    "A ring that turns their finger green", "A tattoo of their own name", "Boots with bells on the toes"
+  ];
+  GENERIC_FEATURES.push(...MORE_FEATURES);
+
+  /* ---------- voice descriptions ---------- */
+  const VOICES = {
+    pitch: ["a deep, rumbling", "a high, reedy", "a melodic, sing-song", "a gravelly", "a soft, breathy", "a booming", "a nasal", "a smooth, honeyed"],
+    quality: ["gravelly", "clear and bright", "raspy", "warm", "thin", "resonant", "hoarse", "crisp"],
+    pace: ["speaks slowly and deliberately", "talks quickly, words tumbling out", "pauses often, choosing words carefully", "rattles off sentences", "draws out the vowels"],
+    accent: ["a rolling northern accent", "a clipped, formal diction", "a lilting lilt", "a rough frontier drawl", "a precise, educated manner of speaking", "no accent at all — flat and neutral", "a thick accent you can't place"],
+    quirk: ["hums when thinking", "laughs at their own jokes", "trails off mid-sentence", "emphasizes every third word", "whispers when excited", "never uses contractions", "counts things aloud under their breath"],
+    speciesQuirk: {
+      dragonborn: "Sibilant hisses slip into their speech when angry.",
+      tiefling: "A faint, pleasant echo underlies their words.",
+      dwarf: "Gruff and to the point; rarely wastes words.",
+      elf: "Speaks with an old-world formality and long vowels.",
+      goliath: "Booming and proud; booms louder when emotional.",
+      orc: "Growls certain consonants.",
+      gnome: "Giggles mid-sentence.",
+      halfling: "Chuckles constantly, even at bad news.",
+      aasimar: "Their voice carries a faint, bell-like chime.",
+      human: "Plain, unremarkable speech."
+    }
+  };
+
+  /* ---------- species combat-relevant traits / resistances (2024 PHB) ---------- */
+  const SPECIES_TRAITS = {
+    human: "Versatile: an Origin feat of their choice.",
+    elf: "Fey Ancestry: Advantage on saves against Charmed; immune to magical sleep. Trance.",
+    dwarf: "Dwarven Resilience: Resistance to Poison damage and Advantage on saves vs the Poisoned condition.",
+    gnome: "Gnome Cunning: Advantage on Int, Wis, and Cha saves against magic.",
+    halfling: "Brave: Advantage on saves against the Frightened condition. Lucky.",
+    orc: "Relentless Endurance and Adrenaline Rush (Bonus Action Dash + temp HP).",
+    goliath: "Powerful Build; Giant Ancestry (%LINEAGE%).",
+    dragonborn: "Draconic Ancestry (%LINEAGE%): Resistance to %LINEAGE% damage; Breath Weapon (%LINEAGE%).",
+    tiefling: "Fiendish Legacy (%LINEAGE%): Resistance to %RES% damage; Darkvision.",
+    aasimar: "Resistance to Necrotic and Radiant damage; Healing Hands; Celestial Revelation at 3rd level."
+  };
+  const TIEFLING_RES = { Abyssal: "Poison", Chthonic: "Necrotic", Infernal: "Fire" };
+
+  /* ---------- per-class combat profile for leveled NPC stat blocks ---------- */
+  const CLASS_COMBAT = {
+    barbarian: { weapon: { name: "Greatsword", dice: 2, sides: 6, type: "slashing", stat: "Str" }, cantrip: null, extraAttackAt: 5, order: ["Str", "Con", "Dex", "Wis", "Cha", "Int"], ac: "unarmoredBarb" },
+    bard:      { weapon: { name: "Rapier", dice: 1, sides: 8, type: "piercing", stat: "Dex" }, cantrip: { name: "Vicious Mockery", dice: 1, sides: 4, type: "psychic", stat: "Cha" }, extraAttackAt: null, order: ["Cha", "Dex", "Con", "Int", "Wis", "Str"], ac: 14 },
+    cleric:    { weapon: { name: "Warhammer", dice: 1, sides: 8, type: "bludgeoning", stat: "Str" }, cantrip: { name: "Sacred Flame", dice: 1, sides: 8, type: "radiant", stat: "Wis" }, extraAttackAt: null, order: ["Wis", "Str", "Con", "Dex", "Int", "Cha"], ac: 18, shield: true },
+    druid:     { weapon: { name: "Scimitar", dice: 1, sides: 6, type: "slashing", stat: "Dex" }, cantrip: { name: "Produce Flame", dice: 1, sides: 8, type: "fire", stat: "Wis" }, extraAttackAt: null, order: ["Wis", "Con", "Dex", "Str", "Int", "Cha"], ac: 16, shield: true },
+    fighter:   { weapon: { name: "Longsword", dice: 1, sides: 8, type: "slashing", stat: "Str" }, cantrip: null, extraAttackAt: 5, order: ["Str", "Con", "Dex", "Wis", "Cha", "Int"], ac: 18, shield: true },
+    monk:      { weapon: { name: "Spear", dice: 1, sides: 6, type: "piercing", stat: "Dex" }, cantrip: null, extraAttackAt: 5, order: ["Dex", "Wis", "Str", "Con", "Cha", "Int"], ac: "unarmoredMonk" },
+    paladin:   { weapon: { name: "Longsword", dice: 1, sides: 8, type: "slashing", stat: "Str" }, cantrip: null, extraAttackAt: 5, order: ["Str", "Cha", "Con", "Wis", "Dex", "Int"], ac: 18, shield: true },
+    ranger:    { weapon: { name: "Shortsword", dice: 1, sides: 6, type: "piercing", stat: "Dex" }, cantrip: null, extraAttackAt: 5, order: ["Dex", "Wis", "Str", "Con", "Cha", "Int"], ac: 16, shield: true },
+    rogue:     { weapon: { name: "Shortsword", dice: 1, sides: 6, type: "piercing", stat: "Dex" }, cantrip: null, extraAttackAt: null, sneak: true, order: ["Dex", "Con", "Int", "Wis", "Cha", "Str"], ac: 14 },
+    sorcerer:  { weapon: { name: "Dagger", dice: 1, sides: 4, type: "piercing", stat: "Dex" }, cantrip: { name: "Fire Bolt", dice: 1, sides: 10, type: "fire", stat: "Cha" }, extraAttackAt: null, order: ["Cha", "Con", "Dex", "Wis", "Int", "Str"], ac: "light" },
+    warlock:   { weapon: { name: "Light Crossbow", dice: 1, sides: 8, type: "piercing", stat: "Dex" }, cantrip: { name: "Eldritch Blast", dice: 1, sides: 10, type: "force", stat: "Cha" }, extraAttackAt: null, order: ["Cha", "Con", "Dex", "Wis", "Int", "Str"], ac: "light" },
+    wizard:    { weapon: { name: "Dagger", dice: 1, sides: 4, type: "piercing", stat: "Dex" }, cantrip: { name: "Fire Bolt", dice: 1, sides: 10, type: "fire", stat: "Int" }, extraAttackAt: null, order: ["Int", "Con", "Dex", "Wis", "Cha", "Str"], ac: "light" }
+  };
+
+  window.DM_DATA = { SPECIES, GENERIC_FEATURES, TABLES, LEVELS, VOICES, SPECIES_TRAITS, TIEFLING_RES, CLASS_COMBAT };
 })();

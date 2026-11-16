@@ -1,6 +1,8 @@
 /* DM's Table — Soundboard tab.
-   Matt-Mercer-style mixing board: every channel is synthesized live with the Web Audio API
-   (no audio files), mixed through vertical sliders, with saveable presets in localStorage. */
+   Matt-Mercer-style mixing board. Channels play real audio loop files from sounds/
+   (rendered by tools/render-sounds.js); if a file is missing, the built-in Web Audio
+   synthesizer is used as a fallback. Vertical sliders mix everything; presets are
+   saved in localStorage. */
 (function () {
   "use strict";
 
@@ -63,7 +65,7 @@
     };
   }
 
-  /* ================= audio helpers ================= */
+  /* ================= Web Audio synth (fallback engine) ================= */
   let ctx = null, masterGain = null;
 
   function ensureCtx() {
@@ -93,7 +95,6 @@
     }
     return buf;
   }
-
   const whiteBuf = () => noiseBuffer(2, false);
   const brownBuf = () => noiseBuffer(3, true);
 
@@ -104,7 +105,6 @@
     s.start();
     return s;
   }
-
   function biquad(type, freq, q) {
     const f = ctx.createBiquadFilter();
     f.type = type;
@@ -112,14 +112,11 @@
     if (q !== undefined) f.Q.value = q;
     return f;
   }
-
   function gainNode(v) {
     const g = ctx.createGain();
     g.gain.value = v;
     return g;
   }
-
-  // simple LFO modulating a param
   function lfo(freq, depth, param) {
     const o = ctx.createOscillator();
     o.frequency.value = freq;
@@ -130,8 +127,6 @@
     o.start();
     return o;
   }
-
-  // one-shot enveloped noise burst through a filter
   function burst(opts) {
     const t = ctx.currentTime + (opts.when || 0);
     const s = ctx.createBufferSource();
@@ -147,8 +142,6 @@
     s.start(t, Math.random() * 1.5);
     s.stop(t + (opts.attack || 0.01) + (opts.decay || 0.2) + 0.1);
   }
-
-  // one-shot enveloped tone
   function tone(opts) {
     const t = ctx.currentTime + (opts.when || 0);
     const o = ctx.createOscillator();
@@ -162,13 +155,11 @@
     g.gain.exponentialRampToValueAtTime(peak, t + (opts.attack || 0.02));
     g.gain.exponentialRampToValueAtTime(0.0001, t + (opts.attack || 0.02) + (opts.decay || 0.4));
     o.connect(f || g);
-    if (f) { f.connect(g); }
+    if (f) f.connect(g);
     g.connect(opts.out);
     o.start(t);
     o.stop(t + (opts.attack || 0.02) + (opts.decay || 0.4) + 0.1);
   }
-
-  // repeating scheduler; returns a cancel function
   function scheduler(minMs, maxMs, fn) {
     let cancelled = false;
     let timer = null;
@@ -181,12 +172,11 @@
     return () => { cancelled = true; clearTimeout(timer); };
   }
 
-  /* ================= channel generators ================= */
-  // Each start(ctx, out) builds its graph and returns a stop() that silences & tears down.
-
+  /* ================= channels ================= */
+  // file: real loop rendered by tools/render-sounds.js; start(): synth fallback recipe.
   const CHANNELS = [
     {
-      id: "tavern", name: "Tavern Crowd", icon: "🍺", vol: 70, max: 0.5,
+      id: "tavern", name: "Tavern Crowd", icon: "🍺", vol: 70, max: 0.9, file: "sounds/tavern.wav",
       start(out) {
         const bed = loopSrc(brownBuf());
         const bedF = biquad("lowpass", 380, 0.7);
@@ -199,7 +189,21 @@
       }
     },
     {
-      id: "rain", name: "Rain", icon: "🌧️", vol: 65, max: 0.55,
+      id: "town", name: "Town Center", icon: "🏘️", vol: 65, max: 0.9, file: "sounds/town.wav",
+      start(out) {
+        const bed = loopSrc(brownBuf());
+        const bf = biquad("bandpass", 500, 0.7);
+        const bg = gainNode(0.15);
+        bed.connect(bf); bf.connect(bg); bg.connect(out);
+        const c1 = scheduler(400, 1200, () => burst({ out, freq: 250 + Math.random() * 700, q: 3, peak: 0.08 + Math.random() * 0.12, attack: 0.03, decay: 0.15 + Math.random() * 0.3, rate: 0.7 + Math.random() * 0.6 }));
+        const c2 = scheduler(4000, 10000, () => { const f = 900 + Math.random() * 1700; tone({ out, freq: f, peak: 0.09, attack: 0.004, decay: 0.35 }); tone({ out, freq: f * 1.5, peak: 0.06, attack: 0.004, decay: 0.25 }); });
+        const c3 = scheduler(8000, 16000, () => { tone({ out, freq: 660, peak: 0.12, attack: 0.01, decay: 2.5 }); tone({ out, freq: 990, peak: 0.06, attack: 0.01, decay: 2 }); });
+        const c4 = scheduler(10000, 25000, () => { tone({ out, wave: "square", freq: 300, filterFreq: 900, peak: 0.05, attack: 0.01, decay: 0.08 }); setTimeout(() => tone({ out, wave: "square", freq: 300, filterFreq: 900, peak: 0.045, attack: 0.01, decay: 0.08 }), 140); });
+        return () => { bed.stop(); c1(); c2(); c3(); c4(); };
+      }
+    },
+    {
+      id: "rain", name: "Rain", icon: "🌧️", vol: 65, max: 0.8, file: "sounds/rain.wav",
       start(out) {
         const src = loopSrc(whiteBuf());
         const hp = biquad("highpass", 700, 0.5);
@@ -215,7 +219,7 @@
       }
     },
     {
-      id: "thunder", name: "Thunder", icon: "⛈️", vol: 60, max: 0.9,
+      id: "thunder", name: "Thunder", icon: "⛈️", vol: 60, max: 0.85, file: "sounds/thunder.wav",
       start(out) {
         const bed = loopSrc(brownBuf());
         const bf = biquad("lowpass", 90, 0.8);
@@ -229,7 +233,7 @@
       }
     },
     {
-      id: "wind", name: "Wind", icon: "🍃", vol: 55, max: 0.5,
+      id: "wind", name: "Wind", icon: "🍃", vol: 55, max: 0.7, file: "sounds/wind.wav",
       start(out) {
         const src = loopSrc(whiteBuf());
         const f = biquad("bandpass", 350, 1.2);
@@ -241,7 +245,7 @@
       }
     },
     {
-      id: "fire", name: "Fireplace", icon: "🔥", vol: 60, max: 0.55,
+      id: "fire", name: "Fireplace", icon: "🔥", vol: 60, max: 0.8, file: "sounds/fire.wav",
       start(out) {
         const bed = loopSrc(brownBuf());
         const bf = biquad("lowpass", 260, 0.8);
@@ -252,7 +256,7 @@
       }
     },
     {
-      id: "forest", name: "Forest & Birds", icon: "🌲", vol: 60, max: 0.5,
+      id: "forest", name: "Forest & Birds", icon: "🌲", vol: 60, max: 0.85, file: "sounds/forest.wav",
       start(out) {
         const bed = loopSrc(brownBuf());
         const bf = biquad("lowpass", 220, 0.8);
@@ -273,7 +277,7 @@
       }
     },
     {
-      id: "night", name: "Night Crickets", icon: "🦗", vol: 45, max: 0.35,
+      id: "night", name: "Night Crickets", icon: "🦗", vol: 45, max: 0.8, file: "sounds/night.wav",
       start(out) {
         const o = ctx.createOscillator();
         o.type = "square";
@@ -293,7 +297,7 @@
       }
     },
     {
-      id: "ocean", name: "Ocean Waves", icon: "🌊", vol: 65, max: 0.55,
+      id: "ocean", name: "Ocean Waves", icon: "🌊", vol: 65, max: 0.85, file: "sounds/ocean.wav",
       start(out) {
         const src = loopSrc(whiteBuf());
         const lp = biquad("lowpass", 420, 0.6);
@@ -309,7 +313,7 @@
       }
     },
     {
-      id: "dungeon", name: "Dungeon Drone", icon: "🕯️", vol: 60, max: 0.5,
+      id: "dungeon", name: "Dungeon Drone", icon: "🕯️", vol: 60, max: 0.8, file: "sounds/dungeon.wav",
       start(out) {
         const g = gainNode(0.16);
         const mix = gainNode(1);
@@ -335,7 +339,7 @@
       }
     },
     {
-      id: "battle", name: "Battle", icon: "⚔️", vol: 75, max: 0.8,
+      id: "battle", name: "Battle", icon: "⚔️", vol: 75, max: 0.75, file: "sounds/battle.wav",
       start(out) {
         const bed = loopSrc(brownBuf());
         const bf = biquad("lowpass", 360, 0.8);
@@ -354,7 +358,7 @@
       }
     },
     {
-      id: "crowd", name: "Crowd / Cheer", icon: "📣", vol: 65, max: 0.6,
+      id: "crowd", name: "Crowd / Cheer", icon: "📣", vol: 65, max: 0.9, file: "sounds/crowd.wav",
       start(out) {
         const bed = loopSrc(brownBuf());
         const bf = biquad("bandpass", 500, 0.7);
@@ -369,59 +373,95 @@
         });
         return () => { bed.stop(); c1(); c2(); };
       }
-    },
-    {
-      id: "ship", name: "Ship at Sea", icon: "⛵", vol: 55, max: 0.45,
-      start(out) {
-        const waves = loopSrc(whiteBuf());
-        const lp = biquad("lowpass", 320, 0.6);
-        const wg = gainNode(0.16);
-        waves.connect(lp); lp.connect(wg); wg.connect(out);
-        const l = lfo(0.09, 0.12, wg.gain);
-        const c1 = scheduler(3000, 8000, () => {
-          const f = 130 + Math.random() * 140;
-          tone({ out, wave: "sine", freq: f, freqEnd: f * (0.7 + Math.random() * 0.5), slide: 0.5 + Math.random() * 0.6, peak: 0.12, attack: 0.15, decay: 0.9 });
-        });
-        const c2 = scheduler(5000, 13000, () => burst({ out, freq: 850 + Math.random() * 400, q: 4, peak: 0.06, attack: 0.004, decay: 0.06 }));
-        return () => { waves.stop(); l.stop(); c1(); c2(); };
-      }
     }
   ];
 
   /* ================= mixer / UI ================= */
   const state = {};      // id -> { vol, on }
-  const running = {};    // id -> { gain, stop }
+  const running = {};    // id -> { kind: 'audio'|'synth', audio, gain, stop, failed }
   let masterSlider = null;
   let masterValLabel = null;
-  const sliderRefs = {}; // id -> slider
+  const sliderRefs = {};
   const powerRefs = {};
   const cardRefs = {};
 
-  function gainFor(def, v) {
-    return Math.pow(v / 100, 1.6) * def.max;
+  const masterNorm = () => Math.pow(masterSlider ? masterSlider.get() / 100 : 0.8, 1.5);
+  const channelTarget = (def) => Math.pow(state[def.id].vol / 100, 1.5) * def.max;
+
+  function applyChannelVol(def) {
+    const r = running[def.id];
+    if (!r) return;
+    if (r.kind === "audio" && r.audio) {
+      r.audio.volume = Math.min(1, Math.max(0, channelTarget(def) * masterNorm()));
+    } else if (r.kind === "synth" && r.gain && ctx) {
+      r.gain.gain.setTargetAtTime(Math.pow(state[def.id].vol / 100, 1.6) * def.max, ctx.currentTime, 0.05);
+    }
   }
 
-  function startChannel(def) {
+  function startSynthOnly(def, entry) {
     ensureCtx();
-    if (running[def.id]) return;
     const g = ctx.createGain();
     g.gain.value = 0.0001;
     g.connect(masterGain);
     const stop = def.start(g);
-    running[def.id] = { gain: g, stop };
-    const target = gainFor(def, state[def.id].vol);
-    g.gain.setTargetAtTime(target, ctx.currentTime, 0.15);
+    entry.kind = "synth";
+    entry.gain = g;
+    entry.stop = stop;
+    g.gain.gain.setTargetAtTime(Math.pow(state[def.id].vol / 100, 1.6) * def.max, ctx.currentTime, 0.15);
+  }
+
+  function swapToSynth(def, entry) {
+    if (entry.audio) { try { entry.audio.pause(); } catch (e) { /* noop */ } entry.audio = null; }
+    startSynthOnly(def, entry);
+  }
+
+  function startChannel(def) {
+    if (running[def.id]) return;
+    const entry = { kind: "audio", audio: null, gain: null, stop: null, failed: false };
+    running[def.id] = entry;
+    if (def.file) {
+      const a = new Audio();
+      a.loop = true;
+      a.preload = "auto";
+      entry.audio = a;
+      a.addEventListener("error", () => { if (!entry.failed) { entry.failed = true; swapToSynth(def, entry); } });
+      a.src = def.file;
+      const pr = a.play();
+      if (pr && pr.catch) pr.catch(() => { if (!entry.failed) { entry.failed = true; swapToSynth(def, entry); } });
+      applyChannelVol(def);
+    } else {
+      startSynthOnly(def, entry);
+    }
+  }
+
+  function rampAudioTo(a, target, done) {
+    const start = a.volume;
+    const t0 = performance.now();
+    const dur = 250;
+    const iv = setInterval(() => {
+      const t = (performance.now() - t0) / dur;
+      if (t >= 1) {
+        clearInterval(iv);
+        a.volume = target;
+        if (done) done();
+      } else {
+        a.volume = start + (target - start) * t;
+      }
+    }, 30);
   }
 
   function stopChannel(def) {
     const r = running[def.id];
     if (!r) return;
     delete running[def.id];
-    if (ctx) {
-      r.gain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.08);
-      setTimeout(() => { try { r.stop(); r.gain.disconnect(); } catch (e) { /* already stopped */ } }, 400);
-    } else {
-      try { r.stop(); } catch (e) { /* noop */ }
+    if (r.kind === "audio" && r.audio) {
+      const a = r.audio;
+      rampAudioTo(a, 0, () => { try { a.pause(); a.currentTime = 0; } catch (e) { /* noop */ } });
+    } else if (r.kind === "synth" && r.gain) {
+      if (ctx) r.gain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.08);
+      setTimeout(() => {
+        try { r.stop(); r.gain.disconnect(); } catch (e) { /* already stopped */ }
+      }, 400);
     }
   }
 
@@ -429,6 +469,7 @@
     const on = !!state[def.id].on;
     powerRefs[def.id].classList.toggle("on", on);
     powerRefs[def.id].textContent = on ? "ON" : "OFF";
+    powerRefs[def.id].setAttribute("aria-pressed", String(on));
     cardRefs[def.id].classList.toggle("playing", on);
     sliderRefs[def.id].el.classList.toggle("on", on);
   }
@@ -461,7 +502,7 @@
       power.type = "button";
       power.textContent = "OFF";
       power.setAttribute("aria-pressed", "false");
-      power.addEventListener("click", () => { toggleChannel(def); power.setAttribute("aria-pressed", String(state[def.id].on)); });
+      power.addEventListener("click", () => toggleChannel(def));
       powerRefs[def.id] = power;
 
       const sliderEl = document.createElement("div");
@@ -478,8 +519,7 @@
       const slider = createVSlider(sliderEl, def.vol, (v) => {
         state[def.id].vol = v;
         volLabel.textContent = v + "%";
-        const r = running[def.id];
-        if (r && ctx) r.gain.gain.setTargetAtTime(gainFor(def, v), ctx.currentTime, 0.05);
+        applyChannelVol(def);
       });
       sliderRefs[def.id] = slider;
       volLabel.textContent = def.vol + "%";
@@ -496,11 +536,12 @@
   /* ---------- presets ---------- */
   const BUILTIN_PRESETS = [
     { name: "Tavern Night", master: 80, channels: { tavern: { on: true, vol: 80 }, fire: { on: true, vol: 45 }, night: { on: true, vol: 15 } } },
+    { name: "Town Square", master: 85, channels: { town: { on: true, vol: 75 }, crowd: { on: true, vol: 30 } } },
     { name: "Rainstorm", master: 85, channels: { rain: { on: true, vol: 75 }, thunder: { on: true, vol: 60 }, wind: { on: true, vol: 30 } } },
     { name: "Dungeon Delve", master: 80, channels: { dungeon: { on: true, vol: 80 }, fire: { on: true, vol: 18 } } },
     { name: "Battle", master: 90, channels: { battle: { on: true, vol: 85 }, thunder: { on: true, vol: 20 } } },
     { name: "Forest Calm", master: 75, channels: { forest: { on: true, vol: 70 }, night: { on: true, vol: 30 }, wind: { on: true, vol: 15 } } },
-    { name: "Ocean Voyage", master: 80, channels: { ocean: { on: true, vol: 70 }, ship: { on: true, vol: 55 }, wind: { on: true, vol: 20 } } },
+    { name: "Ocean Voyage", master: 80, channels: { ocean: { on: true, vol: 70 }, wind: { on: true, vol: 25 } } },
     { name: "Market Crowd", master: 85, channels: { crowd: { on: true, vol: 70 }, tavern: { on: true, vol: 40 } } },
     { name: "Silence", master: 80, channels: {} }
   ];
@@ -512,7 +553,6 @@
       return {};
     }
   }
-
   function saveUserPresets(obj) {
     localStorage.setItem(PRESET_KEY, JSON.stringify(obj));
   }
@@ -524,10 +564,9 @@
   }
 
   function applyPreset(preset) {
-    ensureCtx();
     masterSlider.set(preset.master || 80);
     masterValLabel.textContent = Math.round(preset.master || 80) + "%";
-    if (masterGain) masterGain.gain.setTargetAtTime(Math.pow((preset.master || 80) / 100, 1.5) * 0.9, ctx.currentTime, 0.1);
+    if (ctx && masterGain) masterGain.gain.setTargetAtTime(masterNorm(), ctx.currentTime, 0.1);
     CHANNELS.forEach((def) => {
       const p = preset.channels && preset.channels[def.id];
       const on = !!(p && p.on);
@@ -540,6 +579,7 @@
       if (volLabel) volLabel.textContent = vol + "%";
       if (on && !running[def.id]) startChannel(def);
       if (!on && running[def.id]) stopChannel(def);
+      if (running[def.id]) applyChannelVol(def);
       refreshPowerUI(def);
     });
   }
@@ -548,8 +588,8 @@
     const list = document.getElementById("preset-list");
     list.innerHTML = "";
     const user = loadUserPresets();
-    const all = BUILTIN_PRESETS.map(p => ({ ...p, builtin: true }))
-      .concat(Object.keys(user).map(name => ({ name, builtin: false, ...user[name] })));
+    const all = BUILTIN_PRESETS.map((p) => ({ ...p, builtin: true }))
+      .concat(Object.keys(user).map((name) => ({ name, builtin: false, ...user[name] })));
 
     all.forEach((preset) => {
       const chip = document.createElement("div");
@@ -557,7 +597,6 @@
       const load = document.createElement("button");
       load.className = "preset-load";
       load.type = "button";
-      load.innerHTML = "";
       const nm = document.createElement("span");
       nm.className = "preset-name";
       nm.textContent = preset.name;
@@ -589,7 +628,8 @@
     masterValLabel = document.getElementById("master-val");
     masterSlider = createVSlider(masterEl, 80, (v) => {
       masterValLabel.textContent = v + "%";
-      if (ctx && masterGain) masterGain.gain.setTargetAtTime(Math.pow(v / 100, 1.5) * 0.9, ctx.currentTime, 0.05);
+      if (ctx && masterGain) masterGain.gain.setTargetAtTime(masterNorm(), ctx.currentTime, 0.05);
+      CHANNELS.forEach((def) => { if (running[def.id]) applyChannelVol(def); });
     });
     masterSlider.set(80);
     masterValLabel.textContent = "80%";

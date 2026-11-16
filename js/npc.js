@@ -1,11 +1,14 @@
 /* DM's Table — NPC Generator tab.
    Species/lineages follow the 2024 Player's Handbook (10 core species).
+   Optional leveled characters: class data comes from js/classes.js, generated from the
+   Complete Compendium 5.5e XML via tools/build-classes.js.
    Saved NPCs persist in localStorage, with JSON export/import. */
 (function () {
   "use strict";
 
   const ROSTER_KEY = "dmDash.npcRoster.v1";
   const DATA = window.DM_DATA;
+  const CLASSES = window.DM_CLASSES;
 
   const $ = (id) => document.getElementById(id);
 
@@ -21,10 +24,14 @@
     while (out.length < n && copy.length) out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
     return out;
   };
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const mod = (s) => Math.floor((s - 10) / 2);
+  const fmtMod = (m) => (m >= 0 ? "+" : "") + m;
 
   let current = null;
 
   const SEX_LABEL = { male: "Male", female: "Female", nonbinary: "Nonbinary" };
+  const ABIL_SHORT = { Strength: "STR", Dexterity: "DEX", Constitution: "CON", Intelligence: "INT", Wisdom: "WIS", Charisma: "CHA" };
 
   function fmtHeight(inches) {
     const ft = Math.floor(inches / 12);
@@ -32,7 +39,6 @@
     const cm = Math.round(inches * 2.54);
     return ft + "'" + inch + '" (' + cm + " cm)";
   }
-
   function fmtWeight(lbs) {
     return Math.round(lbs) + " lb (" + Math.round(lbs * 0.453592) + " kg)";
   }
@@ -45,12 +51,20 @@
     return pick(pool) + " " + pick(species.surnames);
   }
 
+  function genVoice(species) {
+    const V = DATA.VOICES;
+    let s = cap(pick(V.pitch)) + " voice — " + pick(V.quality) + "; " + pick(V.pace) + ", with " + pick(V.accent) + ". ";
+    s += cap(pick(V.quirk)) + ".";
+    const sq = V.speciesQuirk[species.id];
+    if (sq) s += " " + sq;
+    return s;
+  }
+
   function genFeatures(species) {
     if (Math.random() < 0.2) return [];
-    const count = 1 + Math.floor(Math.random() * 3); // 1–3 features
-    const generic = DATA.GENERIC_FEATURES.map((f) => ({ text: f, w: 3 }));
-    const racial = species.features.map((f) => ({ text: f, w: 2 }));
-    const bag = generic.concat(racial);
+    const count = 1 + Math.floor(Math.random() * 3);
+    const bag = DATA.GENERIC_FEATURES.map((f) => ({ text: f, w: 3 }))
+      .concat(species.features.map((f) => ({ text: f, w: 2 })));
     const out = [];
     for (let i = 0; i < count; i++) {
       const total = bag.reduce((s, b) => s + b.w, 0);
@@ -62,21 +76,94 @@
     return out;
   }
 
-  function selectedSpecies() {
-    return DATA.SPECIES.find((s) => s.id === $("npc-species").value) || DATA.SPECIES[0];
+  /* ---------- leveled character stat block ---------- */
+  const ABIL_FULL = { Str: "Strength", Dex: "Dexterity", Con: "Constitution", Int: "Intelligence", Wis: "Wisdom", Cha: "Charisma" };
+
+  function rollScores(order) {
+    const rolls = [];
+    for (let i = 0; i < 6; i++) {
+      const d = [dice(1, 6), dice(1, 6), dice(1, 6), dice(1, 6)].sort((a, b) => a - b);
+      rolls.push(d[1] + d[2] + d[3]);
+    }
+    rolls.sort((a, b) => b - a);
+    const scores = {};
+    order.forEach((ab, i) => { scores[ABIL_FULL[ab] || ab] = rolls[i]; });
+    return scores;
   }
 
+  function speciesTraitsText(speciesId, lineage) {
+    let t = DATA.SPECIES_TRAITS[speciesId] || "";
+    if (t.includes("%LINEAGE%")) t = t.split("%LINEAGE%").join(lineage || "—");
+    if (t.includes("%RES%")) t = t.split("%RES%").join((DATA.TIEFLING_RES[lineage] || "special") );
+    return t;
+  }
+
+  function buildStatBlock(speciesId, lineage, level, cls) {
+    const cc = DATA.CLASS_COMBAT[cls.id];
+    const scores = rollScores(cc.order);
+    const conMod = mod(scores.Constitution);
+    const dexMod = mod(scores.Dexterity);
+    const wisMod = mod(scores.Wisdom);
+    const prof = DATA.LEVELS.find((l) => l.level === level).prof;
+
+    const hp = cls.hd + conMod + (level - 1) * (Math.floor(cls.hd / 2) + 1 + conMod);
+
+    let ac;
+    if (cc.ac === "unarmoredBarb") ac = 10 + dexMod + conMod;
+    else if (cc.ac === "unarmoredMonk") ac = 10 + dexMod + wisMod;
+    else if (cc.ac === "light") ac = 11 + dexMod;
+    else ac = cc.ac;
+
+    const skills = sample(cls.skills, Math.min(cls.numSkills, cls.skills.length));
+    const saves = cls.saves.map((s) => s + " " + fmtMod(mod(scores[s]) + prof));
+
+    const statOf = (w) => mod(scores[w.stat === "Str" ? "Strength" : w.stat === "Dex" ? "Dexterity" : w.stat === "Cha" ? "Charisma" : w.stat === "Int" ? "Intelligence" : w.stat === "Wis" ? "Wisdom" : "Constitution"]);
+
+    const actions = [];
+    const w = cc.weapon;
+    const wMod = statOf(w);
+    actions.push(w.name + " " + fmtMod(wMod + prof) + " to hit, reach 5 ft, one target. Hit: " + w.dice + "d" + w.sides + fmtMod(wMod) + " " + w.type + " damage.");
+    if (cc.cantrip) {
+      const c = cc.cantrip;
+      const cMod = statOf(c);
+      const dc = 1 + (level >= 5 ? 1 : 0) + (level >= 11 ? 1 : 0) + (level >= 17 ? 1 : 0);
+      actions.push(c.name + " (cantrip) " + fmtMod(cMod + prof) + " to hit, range 60 ft. Hit: " + dc + "d" + c.sides + fmtMod(cMod) + " " + c.type + " damage.");
+    }
+    if (cc.extraAttackAt && level >= cc.extraAttackAt) {
+      actions.push("Extra Attack: can make 2 attacks when taking the Attack action.");
+    }
+    if (cc.sneak) {
+      const nd6 = 1 + Math.floor((level - 1) / 2);
+      actions.push("Sneak Attack: once per turn, +" + nd6 + "d6 damage on a hit with advantage or vs a distracted target.");
+    }
+
+    const features = cls.features.filter((f) => f.level <= level);
+
+    return {
+      level, classId: cls.id, className: cls.name, hd: cls.hd,
+      scores, hp, ac, speed: 30, prof,
+      passivePerception: 10 + wisMod + (skills.includes("Perception") ? prof : 0),
+      saves, skills, actions, features,
+      traits: speciesTraitsText(speciesId, lineage)
+    };
+  }
+
+  /* ---------- selection helpers ---------- */
+  function selectedSpecies() {
+    const v = $("npc-species").value;
+    if (v === "random") return pick(DATA.SPECIES);
+    return DATA.SPECIES.find((s) => s.id === v) || DATA.SPECIES[0];
+  }
   function selectedSex() {
     const v = $("npc-sex").value;
     return v === "random" ? pick(["male", "female", "nonbinary"]) : v;
   }
 
-  function renderLineageOptions() {
-    const sp = selectedSpecies();
+  function renderLineageOptions(sp) {
     const wrap = $("lineage-wrap");
     const sel = $("npc-lineage");
     sel.innerHTML = "";
-    if (sp.lineages && sp.lineages.length) {
+    if (sp && sp.lineages && sp.lineages.length) {
       wrap.style.display = "";
       sp.lineages.forEach((l) => {
         const o = document.createElement("option");
@@ -89,17 +176,19 @@
     }
   }
 
+  /* ---------- render ---------- */
   function render() {
     if (!current) return;
     $("npc-name").textContent = current.name;
-    $("npc-species-lineage").textContent =
-      current.species + (current.lineage ? " · " + current.lineage : "");
+    $("npc-species-lineage").textContent = current.species + (current.lineage ? " · " + current.lineage : "");
     $("npc-sex-out").textContent = SEX_LABEL[current.sex] || current.sex;
     $("npc-height").textContent = fmtHeight(current.heightIn);
     $("npc-weight").textContent = fmtWeight(current.weightLb);
+    $("npc-voice").textContent = current.voice || "—";
+
     const ul = $("npc-features");
     ul.innerHTML = "";
-    if (current.features.length === 0) {
+    if (!current.features || current.features.length === 0) {
       const li = document.createElement("li");
       li.className = "muted";
       li.textContent = "None — strikingly ordinary.";
@@ -111,16 +200,100 @@
         ul.appendChild(li);
       });
     }
+
+    renderStatBlock(current.statblock);
+
     $("npc-notes").value = current.notes || "";
     $("npc-save").disabled = false;
   }
 
+  function renderStatBlock(sb) {
+    const box = $("npc-statblock");
+    box.innerHTML = "";
+    if (!sb) { box.hidden = true; return; }
+    box.hidden = false;
+
+    const h = document.createElement("h3");
+    h.textContent = "Stat block — Level " + sb.level + " " + sb.className + " (HD d" + sb.hd + ")";
+    box.appendChild(h);
+
+    const ab = document.createElement("div");
+    ab.className = "sb-abilities";
+    for (const abName of ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]) {
+      const cell = document.createElement("div");
+      cell.className = "sb-ab";
+      const s = sb.scores[abName];
+      cell.innerHTML = "";
+      const l1 = document.createElement("span");
+      l1.className = "sb-ab-name";
+      l1.textContent = ABIL_SHORT[abName];
+      const l2 = document.createElement("span");
+      l2.className = "sb-ab-val";
+      l2.textContent = s + " (" + fmtMod(mod(s)) + ")";
+      cell.appendChild(l1);
+      cell.appendChild(l2);
+      ab.appendChild(cell);
+    }
+    box.appendChild(ab);
+
+    const core = document.createElement("div");
+    core.className = "sb-core";
+    core.textContent = "HP " + sb.hp + " · AC " + sb.ac + " · Speed " + sb.speed + " ft · Prof " + fmtMod(sb.prof) + " · Passive Perception " + sb.passivePerception;
+    box.appendChild(core);
+
+    const line = (label, value) => {
+      const d = document.createElement("div");
+      d.className = "sb-line";
+      const b = document.createElement("strong");
+      b.textContent = label + " ";
+      d.appendChild(b);
+      d.appendChild(document.createTextNode(value));
+      box.appendChild(d);
+    };
+    line("Saving Throws", sb.saves.join(", "));
+    line("Skills", sb.skills.join(", "));
+    line("Resistances & Species Traits", sb.traits);
+
+    const act = document.createElement("div");
+    act.className = "sb-line";
+    const ab2 = document.createElement("strong");
+    ab2.textContent = "Actions ";
+    act.appendChild(ab2);
+    const ul = document.createElement("ul");
+    sb.actions.forEach((a) => {
+      const li = document.createElement("li");
+      li.textContent = a;
+      ul.appendChild(li);
+    });
+    act.appendChild(ul);
+    box.appendChild(act);
+
+    const fwrap = document.createElement("div");
+    fwrap.className = "sb-features";
+    const fh = document.createElement("strong");
+    fh.textContent = "Class Features (level " + sb.level + ")";
+    fwrap.appendChild(fh);
+    const ful = document.createElement("ul");
+    sb.features.forEach((f) => {
+      const li = document.createElement("li");
+      const b = document.createElement("b");
+      b.textContent = f.name + " (lv " + f.level + "). ";
+      li.appendChild(b);
+      li.appendChild(document.createTextNode(f.text));
+      ful.appendChild(li);
+    });
+    fwrap.appendChild(ful);
+    box.appendChild(fwrap);
+  }
+
+  /* ---------- generate ---------- */
   function generate() {
     const sp = selectedSpecies();
     const sex = selectedSex();
     const lineage = sp.lineages ? $("npc-lineage").value : null;
     const heightIn = sp.height.base + dice(sp.height.count, sp.height.dice);
     const weightLb = Math.max(15, Math.round(sp.weight.base + (heightIn - 60) * sp.weight.perInch + dice(2, 6)));
+
     current = {
       name: genName(sp, sex),
       species: sp.name,
@@ -130,8 +303,18 @@
       heightIn,
       weightLb,
       features: genFeatures(sp),
-      notes: $("npc-notes").value
+      voice: genVoice(sp),
+      notes: $("npc-notes").value,
+      statblock: null
     };
+
+    if ($("npc-leveled").checked) {
+      const level = parseInt($("npc-level").value, 10) || 1;
+      const cls = CLASSES.find((c) => c.id === $("npc-class").value) || CLASSES[0];
+      current.statblock = buildStatBlock(sp.id, lineage, level, cls);
+    }
+
+    renderLineageOptions(sp);
     render();
   }
 
@@ -144,7 +327,6 @@
       return [];
     }
   }
-
   function saveRoster(r) {
     localStorage.setItem(ROSTER_KEY, JSON.stringify(r));
   }
@@ -187,7 +369,8 @@
       meta.className = "roster-meta";
       meta.textContent =
         (npc.species + (npc.lineage ? " · " + npc.lineage : "")) + " · " +
-        (SEX_LABEL[npc.sex] || npc.sex) + " · " + fmtHeight(npc.heightIn) + " · " + fmtWeight(npc.weightLb);
+        (SEX_LABEL[npc.sex] || npc.sex) + " · " + fmtHeight(npc.heightIn) + " · " + fmtWeight(npc.weightLb) +
+        (npc.statblock ? " · Lv" + npc.statblock.level + " " + npc.statblock.className : "");
       item.appendChild(top);
       item.appendChild(meta);
       box.appendChild(item);
@@ -196,9 +379,18 @@
 
   function loadNPC(npc) {
     $("npc-species").value = npc.speciesId;
-    renderLineageOptions();
+    renderLineageOptions(DATA.SPECIES.find((s) => s.id === npc.speciesId));
     if (npc.lineage) $("npc-lineage").value = npc.lineage;
     $("npc-sex").value = npc.sex;
+    if (npc.statblock) {
+      $("npc-leveled").checked = true;
+      $("leveled-wrap").style.display = "";
+      $("npc-level").value = String(npc.statblock.level);
+      $("npc-class").value = npc.statblock.classId;
+    } else {
+      $("npc-leveled").checked = false;
+      $("leveled-wrap").style.display = "none";
+    }
     current = { ...npc };
     render();
   }
@@ -206,7 +398,12 @@
   function saveCurrent() {
     if (!current) return;
     const roster = loadRoster();
-    const entry = { id: Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), savedAt: new Date().toISOString(), ...current, notes: $("npc-notes").value };
+    const entry = {
+      id: Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36),
+      savedAt: new Date().toISOString(),
+      ...current,
+      notes: $("npc-notes").value
+    };
     roster.push(entry);
     saveRoster(roster);
     renderRoster();
@@ -227,9 +424,10 @@
       try {
         const data = JSON.parse(reader.result);
         if (!Array.isArray(data)) throw new Error("not an array");
-        const existing = loadRoster();
-        const byId = new Map(existing.map((x) => [x.id, x]));
-        data.forEach((x) => { if (x && x.name && x.species) byId.set(x.id || (Date.now().toString(36) + Math.random().toString(36).slice(2)), x); });
+        const byId = new Map(loadRoster().map((x) => [x.id, x]));
+        data.forEach((x) => {
+          if (x && x.name && x.species) byId.set(x.id || (Date.now().toString(36) + Math.random().toString(36).slice(2)), x);
+        });
         saveRoster(Array.from(byId.values()));
         renderRoster();
       } catch (e) {
@@ -241,19 +439,41 @@
 
   function init() {
     const spSel = $("npc-species");
+    const randomOpt = document.createElement("option");
+    randomOpt.value = "random";
+    randomOpt.textContent = "🎲 Random";
+    spSel.appendChild(randomOpt);
     DATA.SPECIES.forEach((s) => {
       const o = document.createElement("option");
       o.value = s.id;
       o.textContent = s.name + (s.lineages ? " (" + s.lineages.length + " options)" : "");
       spSel.appendChild(o);
     });
-    spSel.addEventListener("change", renderLineageOptions);
-    renderLineageOptions();
+    spSel.addEventListener("change", () => renderLineageOptions(spSel.value === "random" ? null : DATA.SPECIES.find((s) => s.id === spSel.value)));
+    renderLineageOptions(null);
+
+    const lvlSel = $("npc-level");
+    for (let i = 1; i <= 20; i++) {
+      const o = document.createElement("option");
+      o.value = String(i);
+      o.textContent = "Level " + i;
+      lvlSel.appendChild(o);
+    }
+    const clsSel = $("npc-class");
+    CLASSES.forEach((c) => {
+      const o = document.createElement("option");
+      o.value = c.id;
+      o.textContent = c.name + " (d" + c.hd + ")";
+      clsSel.appendChild(o);
+    });
+    $("npc-leveled").addEventListener("change", (e) => {
+      $("leveled-wrap").style.display = e.target.checked ? "" : "none";
+    });
 
     $("npc-generate").addEventListener("click", generate);
     $("npc-reroll-name").addEventListener("click", () => {
       if (!current) return;
-      current.name = genName(selectedSpecies(), current.sex);
+      current.name = genName(DATA.SPECIES.find((s) => s.id === current.speciesId), current.sex);
       render();
     });
     $("npc-save").addEventListener("click", saveCurrent);

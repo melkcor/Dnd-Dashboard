@@ -45,7 +45,7 @@
       </aside>
 
       <div class="sound-main">
-        <p class="hint">All audio is synthesized live in your browser (Web Audio) — no files needed. Tap a channel's button to start it, then drag its <strong>vertical slider</strong> to mix. Save your mixes as presets.</p>
+        <p class="hint">Channels play real audio loops from <code>sounds/</code> (with a live-synthesized fallback if a file is missing). Tap a channel's button to start it, then drag its <strong>vertical slider</strong> to mix. Save your mixes as presets.</p>
         <div id="channel-grid" class="channel-grid"></div>
       </div>
     </div>
@@ -70,6 +70,15 @@
             <option value="nonbinary">Nonbinary</option>
           </select>
         </label>
+        <label class="checkbox-label"><input type="checkbox" id="npc-leveled"> Make a leveled character</label>
+        <div id="leveled-wrap" style="display:none">
+          <label>Level
+            <select id="npc-level"></select>
+          </label>
+          <label>Class
+            <select id="npc-class"></select>
+          </label>
+        </div>
         <div class="btn-row">
           <button id="npc-generate" class="btn btn-gold btn-big">🎲 Generate NPC</button>
         </div>
@@ -96,9 +105,11 @@
             <div><dt>Sex</dt><dd id="npc-sex-out">—</dd></div>
             <div><dt>Height</dt><dd id="npc-height">—</dd></div>
             <div><dt>Weight</dt><dd id="npc-weight">—</dd></div>
+            <div class="stat-wide"><dt>Voice</dt><dd id="npc-voice">—</dd></div>
           </dl>
           <h3>Distinguishing features</h3>
           <ul id="npc-features" class="features"><li class="muted">—</li></ul>
+          <div id="npc-statblock" class="statblock" hidden></div>
           <label class="notes-label">DM notes
             <textarea id="npc-notes" rows="4" placeholder="Personality, voice, hook, where the party met them…"></textarea>
           </label>
@@ -122,6 +133,7 @@
 </footer>
 
 <script src="js/data.js" defer></script>
+<script src="js/classes.js" defer></script>
 <script src="js/soundboard.js" defer></script>
 <script src="js/npc.js" defer></script>
 <script src="js/tables.js" defer></script>
