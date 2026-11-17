@@ -19,6 +19,7 @@
   <nav class="tabs" role="tablist">
     <button class="tab active" role="tab" aria-selected="true" data-tab="soundboard">🔊 Soundboard</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="npc">🎭 NPC Generator</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="spells">✨ Spells</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="tables">📜 DM Tables (5.5e)</button>
   </nav>
 </header>
@@ -45,7 +46,7 @@
       </aside>
 
       <div class="sound-main">
-        <p class="hint">Channels play real audio loops from <code>sounds/</code> (with a live-synthesized fallback if a file is missing). Tap a channel's button to start it, then drag its <strong>vertical slider</strong> to mix. Save your mixes as presets.</p>
+        <p class="hint">Channels play real audio loops from <code>sounds/</code> (live-synthesized fallback if missing). Sliders <strong>snap to 25% steps</strong>. Tap a channel's ON button, drag its <strong>vertical slider</strong> to mix, and use <strong>📁</strong> on a card to load your own sound file (e.g. free CC0 recordings) — it's saved in this browser. Save mixes as presets.</p>
         <div id="channel-grid" class="channel-grid"></div>
       </div>
     </div>
@@ -118,6 +119,23 @@
     </div>
   </section>
 
+  <!-- ============ SPELLS ============ -->
+  <section id="tab-spells" class="tab-panel" role="tabpanel">
+    <div class="tables-head">
+      <p class="hint">Core 2024 spells from the compendium. Expand a spell, then use its <strong>level selector</strong> to see the effect at that level. <span id="spells-count" class="pill">0</span></p>
+      <input id="spells-filter" type="search" placeholder="Filter spells… (name, text, class)">
+      <select id="spells-level-filter">
+        <option value="">All levels</option>
+        <option value="0">Cantrips</option>
+        <option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option>
+        <option value="4">4th</option><option value="5">5th</option><option value="6">6th</option>
+        <option value="7">7th</option><option value="8">8th</option><option value="9">9th</option>
+      </select>
+      <select id="spells-class-filter"><option value="">All classes</option></select>
+    </div>
+    <div id="spells-list" class="spells-list"></div>
+  </section>
+
   <!-- ============ TABLES ============ -->
   <section id="tab-tables" class="tab-panel" role="tabpanel">
     <div class="tables-head">
@@ -134,8 +152,10 @@
 
 <script src="js/data.js" defer></script>
 <script src="js/classes.js" defer></script>
+<script src="js/spells-data.js" defer></script>
 <script src="js/soundboard.js" defer></script>
 <script src="js/npc.js" defer></script>
+<script src="js/spellbook.js" defer></script>
 <script src="js/tables.js" defer></script>
 <script src="js/app.js" defer></script>
 </body>

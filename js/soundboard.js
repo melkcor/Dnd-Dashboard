@@ -9,8 +9,10 @@
   const PRESET_KEY = "dmDash.soundPresets.v1";
 
   /* ================= vertical slider component ================= */
+  const snap25 = (v) => Math.max(0, Math.min(100, Math.round(v / 25) * 25));
+
   function createVSlider(el, initial, onChange) {
-    let value = initial;
+    let value = snap25(initial);
     const track = document.createElement("div");
     track.className = "vslider-track";
     const fill = document.createElement("div");
@@ -28,8 +30,8 @@
     }
     function setFromClientY(clientY) {
       const r = el.getBoundingClientRect();
-      let v = 100 - ((clientY - r.top) / r.height) * 100;
-      value = Math.max(0, Math.min(100, Math.round(v)));
+      const v = 100 - ((clientY - r.top) / r.height) * 100;
+      value = snap25(v);
       render();
       if (onChange) onChange(value);
     }
@@ -45,13 +47,13 @@
     });
     el.addEventListener("wheel", (e) => {
       e.preventDefault();
-      value = Math.max(0, Math.min(100, value - Math.sign(e.deltaY) * 3));
+      value = snap25(value - Math.sign(e.deltaY) * 25);
       render();
       if (onChange) onChange(value);
     }, { passive: false });
     el.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowUp" || e.key === "ArrowRight") value = Math.min(100, value + 5);
-      else if (e.key === "ArrowDown" || e.key === "ArrowLeft") value = Math.max(0, value - 5);
+      if (e.key === "ArrowUp" || e.key === "ArrowRight") value = snap25(value + 25);
+      else if (e.key === "ArrowDown" || e.key === "ArrowLeft") value = snap25(value - 25);
       else return;
       e.preventDefault();
       render();
@@ -61,7 +63,7 @@
     return {
       el,
       get: () => value,
-      set: (v) => { value = Math.max(0, Math.min(100, Math.round(v))); render(); }
+      set: (v) => { value = snap25(v); render(); }
     };
   }
 
@@ -384,6 +386,59 @@
   const sliderRefs = {};
   const powerRefs = {};
   const cardRefs = {};
+  const resetRefs = {};
+  const hasCustom = {};
+
+  /* ---------- custom sound files (user-supplied audio, persisted in IndexedDB) ---------- */
+  const customDB = {
+    db: null,
+    open() {
+      if (this.db) return Promise.resolve(this.db);
+      if (!window.indexedDB) return Promise.reject(new Error("no indexedDB"));
+      return new Promise((res, rej) => {
+        const r = indexedDB.open("dmDashSounds", 1);
+        r.onupgradeneeded = () => { r.result.createObjectStore("files"); };
+        r.onsuccess = () => { this.db = r.result; res(this.db); };
+        r.onerror = () => rej(r.error);
+      });
+    },
+    get(id) {
+      return this.open()
+        .then((db) => new Promise((res, rej) => {
+          const q = db.transaction("files", "readonly").objectStore("files").get(id);
+          q.onsuccess = () => res(q.result || null);
+          q.onerror = () => rej(q.error);
+        }))
+        .catch(() => null);
+    },
+    put(id, blob) {
+      return this.open()
+        .then((db) => new Promise((res, rej) => {
+          const q = db.transaction("files", "readwrite").objectStore("files").put(blob, id);
+          q.onsuccess = () => res();
+          q.onerror = () => rej(q.error);
+        }))
+        .catch(() => {});
+    },
+    del(id) {
+      return this.open()
+        .then((db) => new Promise((res, rej) => {
+          const q = db.transaction("files", "readwrite").objectStore("files").delete(id);
+          q.onsuccess = () => res();
+          q.onerror = () => rej(q.error);
+        }))
+        .catch(() => {});
+    },
+    keys() {
+      return this.open()
+        .then((db) => new Promise((res, rej) => {
+          const q = db.transaction("files", "readonly").objectStore("files").getAllKeys();
+          q.onsuccess = () => res(q.result || []);
+          q.onerror = () => rej(q.error);
+        }))
+        .catch(() => []);
+    }
+  };
 
   const masterNorm = () => Math.pow(masterSlider ? masterSlider.get() / 100 : 0.8, 1.5);
   const channelTarget = (def) => Math.pow(state[def.id].vol / 100, 1.5) * def.max;
@@ -417,15 +472,25 @@
 
   function startChannel(def) {
     if (running[def.id]) return;
-    const entry = { kind: "audio", audio: null, gain: null, stop: null, failed: false };
+    const entry = { kind: "audio", audio: null, gain: null, stop: null, failed: false, custom: false };
     running[def.id] = entry;
-    if (def.file) {
+    customDB.get(def.id).then((blob) => {
+      if (!running[def.id]) return;
+      const src = blob ? URL.createObjectURL(blob) : def.file;
+      entry.custom = !!blob;
+      startAudio(def, entry, src);
+    });
+  }
+
+  function startAudio(def, entry, src) {
+    if (!running[def.id]) return;
+    if (src) {
       const a = new Audio();
       a.loop = true;
       a.preload = "auto";
       entry.audio = a;
       a.addEventListener("error", () => { if (!entry.failed) { entry.failed = true; swapToSynth(def, entry); } });
-      a.src = def.file;
+      a.src = src;
       const pr = a.play();
       if (pr && pr.catch) pr.catch(() => { if (!entry.failed) { entry.failed = true; swapToSynth(def, entry); } });
       applyChannelVol(def);
@@ -456,7 +521,12 @@
     delete running[def.id];
     if (r.kind === "audio" && r.audio) {
       const a = r.audio;
-      rampAudioTo(a, 0, () => { try { a.pause(); a.currentTime = 0; } catch (e) { /* noop */ } });
+      rampAudioTo(a, 0, () => {
+        try { a.pause(); a.currentTime = 0; } catch (e) { /* noop */ }
+        if (r.custom && typeof a.src === "string" && a.src.startsWith("blob:")) {
+          try { URL.revokeObjectURL(a.src); } catch (e) { /* noop */ }
+        }
+      });
     } else if (r.kind === "synth" && r.gain) {
       if (ctx) r.gain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.08);
       setTimeout(() => {
@@ -483,7 +553,7 @@
   function buildGrid() {
     const grid = document.getElementById("channel-grid");
     CHANNELS.forEach((def) => {
-      state[def.id] = { vol: def.vol, on: false };
+      state[def.id] = { vol: snap25(def.vol), on: false };
 
       const card = document.createElement("div");
       card.className = "channel-card";
@@ -516,20 +586,66 @@
       const volLabel = document.createElement("span");
       volLabel.className = "channel-vol";
 
-      const slider = createVSlider(sliderEl, def.vol, (v) => {
+      const slider = createVSlider(sliderEl, state[def.id].vol, (v) => {
         state[def.id].vol = v;
         volLabel.textContent = v + "%";
         applyChannelVol(def);
       });
       sliderRefs[def.id] = slider;
-      volLabel.textContent = def.vol + "%";
+      volLabel.textContent = state[def.id].vol + "%";
 
       card.appendChild(icon);
       card.appendChild(name);
       card.appendChild(power);
       card.appendChild(sliderEl);
       card.appendChild(volLabel);
+
+      const customRow = document.createElement("div");
+      customRow.className = "channel-custom";
+      const fileLabel = document.createElement("label");
+      fileLabel.className = "custom-btn";
+      fileLabel.title = "Use your own sound file for this channel (saved in this browser)";
+      fileLabel.textContent = "📁";
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "audio/*";
+      fileInput.hidden = true;
+      fileInput.addEventListener("change", () => {
+        const f = fileInput.files && fileInput.files[0];
+        if (!f) return;
+        customDB.put(def.id, f).then(() => {
+          hasCustom[def.id] = true;
+          refreshCustomUI();
+          if (state[def.id].on) { stopChannel(def); startChannel(def); }
+        });
+        fileInput.value = "";
+      });
+      fileLabel.appendChild(fileInput);
+      const reset = document.createElement("button");
+      reset.className = "custom-btn custom-reset";
+      reset.type = "button";
+      reset.textContent = "↺";
+      reset.title = "Remove custom file — use the built-in sound";
+      reset.style.display = "none";
+      reset.addEventListener("click", () => {
+        customDB.del(def.id).then(() => {
+          delete hasCustom[def.id];
+          refreshCustomUI();
+          if (state[def.id].on) { stopChannel(def); startChannel(def); }
+        });
+      });
+      resetRefs[def.id] = reset;
+      customRow.appendChild(fileLabel);
+      customRow.appendChild(reset);
+      card.appendChild(customRow);
+
       grid.appendChild(card);
+    });
+  }
+
+  function refreshCustomUI() {
+    CHANNELS.forEach((def) => {
+      if (resetRefs[def.id]) resetRefs[def.id].style.display = hasCustom[def.id] ? "" : "none";
     });
   }
 
@@ -565,12 +681,12 @@
 
   function applyPreset(preset) {
     masterSlider.set(preset.master || 80);
-    masterValLabel.textContent = Math.round(preset.master || 80) + "%";
+    masterValLabel.textContent = masterSlider.get() + "%";
     if (ctx && masterGain) masterGain.gain.setTargetAtTime(masterNorm(), ctx.currentTime, 0.1);
     CHANNELS.forEach((def) => {
       const p = preset.channels && preset.channels[def.id];
       const on = !!(p && p.on);
-      const vol = p && typeof p.vol === "number" ? p.vol : def.vol;
+      const vol = snap25(p && typeof p.vol === "number" ? p.vol : state[def.id].vol);
       state[def.id].on = on;
       state[def.id].vol = vol;
       sliderRefs[def.id].set(vol);
@@ -632,7 +748,7 @@
       CHANNELS.forEach((def) => { if (running[def.id]) applyChannelVol(def); });
     });
     masterSlider.set(80);
-    masterValLabel.textContent = "80%";
+    masterValLabel.textContent = masterSlider.get() + "%";
 
     document.getElementById("mute-all").addEventListener("click", () => {
       CHANNELS.forEach((def) => {
@@ -654,6 +770,10 @@
     });
 
     renderPresetList();
+    customDB.keys().then((keys) => {
+      keys.forEach((k) => { hasCustom[k] = true; });
+      refreshCustomUI();
+    });
   }
 
   window.Soundboard = { init };

@@ -32,6 +32,7 @@
 
   const SEX_LABEL = { male: "Male", female: "Female", nonbinary: "Nonbinary" };
   const ABIL_SHORT = { Strength: "STR", Dexterity: "DEX", Constitution: "CON", Intelligence: "INT", Wisdom: "WIS", Charisma: "CHA" };
+  const ORDINAL = ["0th", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"];
 
   function fmtHeight(inches) {
     const ft = Math.floor(inches / 12);
@@ -53,16 +54,12 @@
 
   function genVoice(species) {
     const V = DATA.VOICES;
-    let s = cap(pick(V.pitch)) + " voice — " + pick(V.quality) + "; " + pick(V.pace) + ", with " + pick(V.accent) + ". ";
-    s += cap(pick(V.quirk)) + ".";
-    const sq = V.speciesQuirk[species.id];
-    if (sq) s += " " + sq;
-    return s;
+    return cap(pick(V.pitch)) + ", " + pick(V.quality) + " voice — " + pick(V.pace) + ".";
   }
 
   function genFeatures(species) {
     if (Math.random() < 0.2) return [];
-    const count = 1 + Math.floor(Math.random() * 3);
+    const count = Math.random() < 0.35 ? 2 : 1;
     const bag = DATA.GENERIC_FEATURES.map((f) => ({ text: f, w: 3 }))
       .concat(species.features.map((f) => ({ text: f, w: 2 })));
     const out = [];
@@ -139,11 +136,19 @@
 
     const features = cls.features.filter((f) => f.level <= level);
 
+    const classSpells = (window.DM_SPELLS || []).filter((s) => s.classes.includes(cls.name));
+    const cantrips = classSpells.filter((s) => s.level === 0);
+    const maxSlot = Math.min(9, Math.ceil(level / 2));
+    const leveledSpells = classSpells.filter((s) => s.level >= 1 && s.level <= maxSlot);
+    const spellPicks = sample(cantrips, Math.min(4, cantrips.length))
+      .concat(sample(leveledSpells, Math.min(6, leveledSpells.length)))
+      .map((s) => s.name + (s.level === 0 ? " (cantrip)" : " (" + ORDINAL[s.level] + ")"));
+
     return {
       level, classId: cls.id, className: cls.name, hd: cls.hd,
       scores, hp, ac, speed: 30, prof,
       passivePerception: 10 + wisMod + (skills.includes("Perception") ? prof : 0),
-      saves, skills, actions, features,
+      saves, skills, actions, features, spells: spellPicks,
       traits: speciesTraitsText(speciesId, lineage)
     };
   }
@@ -268,11 +273,14 @@
     act.appendChild(ul);
     box.appendChild(act);
 
-    const fwrap = document.createElement("div");
+    line("Spells", sb.spells && sb.spells.length ? sb.spells.join(", ") : "None — this class has no spells on its list");
+
+    const fwrap = document.createElement("details");
     fwrap.className = "sb-features";
-    const fh = document.createElement("strong");
-    fh.textContent = "Class Features (level " + sb.level + ")";
-    fwrap.appendChild(fh);
+    const fsum = document.createElement("summary");
+    fsum.className = "sb-features-summary";
+    fsum.textContent = "Class Features (level " + sb.level + ") — " + sb.features.length + " total — click to expand";
+    fwrap.appendChild(fsum);
     const ful = document.createElement("ul");
     sb.features.forEach((f) => {
       const li = document.createElement("li");

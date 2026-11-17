@@ -21,6 +21,7 @@
     initTabs();
     window.Soundboard.init();
     window.NPCGen.init();
+    window.Spellbook.init();
     window.Tables.init();
   }
 

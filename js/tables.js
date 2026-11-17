@@ -116,7 +116,6 @@
 
   function buildCard(t) {
     const card = el("details", "table-card");
-    card.open = true;
     card.dataset.search = (t.title + " " + (t.note || "") + " " + t.rows.map((r) => Array.isArray(r) ? r.join(" ") : String(r)).join(" ")).toLowerCase();
     const summary = el("summary", "table-summary");
     summary.appendChild(el("h3", null, t.title));
