@@ -95,20 +95,40 @@
     const lvl = $("spells-level-filter").value;
     const cls = $("spells-class-filter").value.toLowerCase();
     let shown = 0;
-    const list = $("spells-list");
-    list.querySelectorAll(".spell-card").forEach((card) => {
-      const ok = (!q || card.dataset.search.includes(q)) &&
-        (lvl === "" || card.dataset.level === lvl) &&
-        (!cls || card.dataset.classes.split(",").includes(cls));
-      card.style.display = ok ? "" : "none";
-      if (ok) shown++;
+    $("spells-list").querySelectorAll(".spell-group").forEach((g) => {
+      let groupShown = 0;
+      g.querySelectorAll(".spell-card").forEach((card) => {
+        const ok = (!q || card.dataset.search.includes(q)) &&
+          (lvl === "" || card.dataset.level === lvl) &&
+          (!cls || card.dataset.classes.split(",").includes(cls));
+        card.style.display = ok ? "" : "none";
+        if (ok) { shown++; groupShown++; }
+      });
+      g.style.display = groupShown ? "" : "none";
     });
     $("spells-count").textContent = shown + " / " + SPELLS.length + " spells";
   }
 
   function init() {
     const list = $("spells-list");
-    SPELLS.forEach((s) => list.appendChild(buildSpellCard(s)));
+    const groups = new Map();
+    SPELLS.forEach((s) => {
+      if (!groups.has(s.level)) groups.set(s.level, []);
+      groups.get(s.level).push(s);
+    });
+    for (let lvl = 0; lvl <= 9; lvl++) {
+      const arr = groups.get(lvl);
+      if (!arr || !arr.length) continue;
+      const g = el("details", "spell-group");
+      g.open = lvl === 0; // cantrips expanded by default
+      const sum = el("summary", "spell-group-summary");
+      sum.textContent = (lvl === 0 ? "Cantrips (" : ORDINAL[lvl] + "-level spells (") + arr.length + ")";
+      g.appendChild(sum);
+      const inner = el("div", "spell-group-body");
+      arr.forEach((s) => inner.appendChild(buildSpellCard(s)));
+      g.appendChild(inner);
+      list.appendChild(g);
+    }
 
     const clsSel = $("spells-class-filter");
     CLASSES.forEach((c) => {

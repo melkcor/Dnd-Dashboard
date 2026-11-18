@@ -492,3 +492,74 @@ label select, label input { margin-top: 4px; }
 @media (max-width: 600px) {
   .sb-abilities { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ---------- modal popup ---------- */
+.modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; }
+.modal[hidden] { display: none; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(4, 6, 12, 0.7); backdrop-filter: blur(3px); }
+.modal-card {
+  position: relative;
+  width: min(680px, 92vw);
+  max-height: 82vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
+  padding: 20px 24px 24px;
+}
+.modal-title { margin: 0 36px 10px 0; color: var(--accent-bright); font-size: 20px; }
+.modal-close {
+  position: absolute; top: 12px; right: 12px;
+  font: inherit; font-size: 14px;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--muted);
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--red-bright); border-color: var(--red-bright); }
+
+/* ---------- link-style buttons (clickable names) ---------- */
+.linklike {
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--cyan);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.linklike:hover { color: var(--accent-bright); }
+
+/* ---------- spells tab: level groups ---------- */
+.spell-group { grid-column: 1 / -1; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+.spell-group-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 16px;
+  font-weight: 700;
+  color: var(--accent-bright);
+  user-select: none;
+  border-radius: var(--radius);
+}
+.spell-group-summary::-webkit-details-marker { display: none; }
+.spell-group-summary::after { content: "▾"; float: right; color: var(--accent); }
+.spell-group:not([open]) .spell-group-summary::after { content: "▸"; }
+.spell-group-summary:hover { background: rgba(139, 147, 248, 0.09); }
+.spell-group-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+  padding: 0 14px 14px;
+  align-items: start;
+}
+
+/* ---------- NPC stat block: grouped spell list ---------- */
+.sb-spells { display: block; }
+.sb-spell-group { margin: 6px 0; }
+.sb-spell-group > strong { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.sb-spell-group ul { margin: 2px 0 0; padding-left: 18px; columns: 2; }
+.sb-spell-group li { margin: 2px 0; break-inside: avoid; }

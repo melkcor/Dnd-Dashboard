@@ -26,8 +26,7 @@ Night Crickets, Ocean Waves, Dungeon Drone, Battle, Crowd/Cheer.
 ### 🎭 NPC Generator
 Generates NPCs using the **10 core species of the 2024 Player's Handbook (5.5e)** — Aasimar,
 Dragonborn, Dwarf, Elf, Goliath, Gnome, Halfling, Human, Orc, Tiefling — with a **🎲 Random**
-species option and the 2024 sub-choices (Elven lineages, Gnome lineages, Tiefling fiendish
-legacies, Goliath giant ancestries, Dragonborn draconic ancestries).
+species option. (Species sub-variants are still rolled internally to drive resistances/traits.)
 
 For each NPC you get:
 - **Name** (species-flavored pools, ~20+ per gender per species; rerollable)
@@ -41,21 +40,28 @@ For each NPC you get:
 (12 core 2024 classes), and the NPC gets a **stat block**: rolled ability scores assigned by
 class priority, HP (2024 rules), AC by class, Speed, proficiency, saving throws, skills,
 species **resistances/traits**, **actions** (weapon attack, cantrip with level scaling, Extra
-Attack / Sneak Attack where relevant), a selection of **spells appropriate to the class**
-(cantrips + leveled spells up to the character's reach), and all **class features up to that
-level** in a **collapsed-by-default expandable** list with rules text — extracted from the
-*Complete Compendium 5.5e* XML (`tools/build-classes.js` → `js/classes.js`).
+Attack / Sneak Attack where relevant), and — extracted from the *Complete Compendium 5.5e* XML
+(`tools/build-classes.js` → `js/classes.js`):
+- **Spells**: a selection of class-appropriate spells as a **bullet list grouped by spell
+  level**; each spell name is **clickable** and opens a **popup** with the full description
+  (and its scaling data).
+- **Class features** (all features up to the chosen level) in a **collapsed-by-default
+  expandable** list; each feature name is clickable and opens a popup with the full rules text.
+- Optional **Spell slot list** checkbox adds the 2024 spell-slot line for the class+level
+  (full/half casters, or warlock pact slots).
 
 **Save NPC** adds the character to your roster (localStorage). Click a saved name to load it
 back, ✕ to delete. **Export JSON / Import JSON** moves rosters between browsers or machines.
 
 ### ✨ Spells
 **455 core 2024 spells** from the compendium (`tools/build-spells.js` → `js/spells-data.js`),
-as expandable cards with text, level, and class filters. Expanding a spell shows name, school,
-casting time / range / components / duration, class list, and full description — plus a
-**level selector** listing the levels the spell is available at (from the compendium's per-level
-roll data: e.g. Fireball 3rd–9th, Fire Bolt character levels 1/5/11/17). Selecting a level
-rewrites the scaling text for that level ("Cast with a 5th-level slot: 10d6 Fire Damage.").
+as an **expandable list organised by spell level** (Cantrips group open by default; 1st–9th
+level groups collapsed). Text, level, and class filters narrow the list. Expanding a spell
+card shows name, school, casting time / range / components / duration, class list, and full
+description — plus a **level selector** listing the levels the spell is available at (from the
+compendium's per-level roll data: e.g. Fireball 3rd–9th, Fire Bolt character levels 1/5/11/17).
+Selecting a level rewrites the scaling text for that level ("Cast with a 5th-level slot:
+10d6 Fire Damage.").
 
 ### 📜 DM Tables (5.5e reference)
 **Collapsed-by-default expandable** reference cards based on the **2024 rules (5.5e / SRD 5.2)**

@@ -140,15 +140,24 @@
     const cantrips = classSpells.filter((s) => s.level === 0);
     const maxSlot = Math.min(9, Math.ceil(level / 2));
     const leveledSpells = classSpells.filter((s) => s.level >= 1 && s.level <= maxSlot);
-    const spellPicks = sample(cantrips, Math.min(4, cantrips.length))
-      .concat(sample(leveledSpells, Math.min(6, leveledSpells.length)))
-      .map((s) => s.name + (s.level === 0 ? " (cantrip)" : " (" + ORDINAL[s.level] + ")"));
+    const spellObjs = sample(cantrips, Math.min(4, cantrips.length))
+      .concat(sample(leveledSpells, Math.min(6, leveledSpells.length)));
+
+    const casterType = DATA.SPELL_SLOTS.casterType[cls.id];
+    let slots = null;
+    if (casterType === "full" || casterType === "half") {
+      const row = DATA.SPELL_SLOTS[casterType][level - 1] || [];
+      slots = [];
+      row.forEach((count, i) => { if (count) slots.push({ level: i + 1, count }); });
+    } else if (casterType === "pact") {
+      slots = [{ level: DATA.SPELL_SLOTS.pactLevel[level - 1], count: DATA.SPELL_SLOTS.pactCount[level - 1], pact: true }];
+    }
 
     return {
       level, classId: cls.id, className: cls.name, hd: cls.hd,
       scores, hp, ac, speed: 30, prof,
       passivePerception: 10 + wisMod + (skills.includes("Perception") ? prof : 0),
-      saves, skills, actions, features, spells: spellPicks,
+      saves, skills, actions, features, spells: spellObjs, slots,
       traits: speciesTraitsText(speciesId, lineage)
     };
   }
@@ -164,28 +173,11 @@
     return v === "random" ? pick(["male", "female", "nonbinary"]) : v;
   }
 
-  function renderLineageOptions(sp) {
-    const wrap = $("lineage-wrap");
-    const sel = $("npc-lineage");
-    sel.innerHTML = "";
-    if (sp && sp.lineages && sp.lineages.length) {
-      wrap.style.display = "";
-      sp.lineages.forEach((l) => {
-        const o = document.createElement("option");
-        o.value = l;
-        o.textContent = l;
-        sel.appendChild(o);
-      });
-    } else {
-      wrap.style.display = "none";
-    }
-  }
-
   /* ---------- render ---------- */
   function render() {
     if (!current) return;
     $("npc-name").textContent = current.name;
-    $("npc-species-lineage").textContent = current.species + (current.lineage ? " · " + current.lineage : "");
+    $("npc-species-lineage").textContent = current.species;
     $("npc-sex-out").textContent = SEX_LABEL[current.sex] || current.sex;
     $("npc-height").textContent = fmtHeight(current.heightIn);
     $("npc-weight").textContent = fmtWeight(current.weightLb);
@@ -259,6 +251,10 @@
     line("Skills", sb.skills.join(", "));
     line("Resistances & Species Traits", sb.traits);
 
+    if (sb.showSlots && sb.slots && sb.slots.length) {
+      line("Spell Slots", sb.slots.map((s) => ORDINAL[s.level] + " ×" + s.count + (s.pact ? " (pact, short rest)" : "")).join(", "));
+    }
+
     const act = document.createElement("div");
     act.className = "sb-line";
     const ab2 = document.createElement("strong");
@@ -273,8 +269,44 @@
     act.appendChild(ul);
     box.appendChild(act);
 
-    line("Spells", sb.spells && sb.spells.length ? sb.spells.join(", ") : "None — this class has no spells on its list");
+    // spells: bullet list grouped by spell level, names clickable -> modal with description
+    const spDiv = document.createElement("div");
+    spDiv.className = "sb-line sb-spells";
+    const spB = document.createElement("strong");
+    spB.textContent = "Spells ";
+    spDiv.appendChild(spB);
+    if (!sb.spells || !sb.spells.length) {
+      spDiv.appendChild(document.createTextNode("None — this class has no spells on its list"));
+    } else {
+      const byLevel = new Map();
+      sb.spells.forEach((s) => {
+        if (!byLevel.has(s.level)) byLevel.set(s.level, []);
+        byLevel.get(s.level).push(s);
+      });
+      [...byLevel.keys()].sort((a, b) => a - b).forEach((lvl) => {
+        const g = document.createElement("div");
+        g.className = "sb-spell-group";
+        const gh = document.createElement("strong");
+        gh.textContent = lvl === 0 ? "Cantrips" : ORDINAL[lvl] + "-level";
+        g.appendChild(gh);
+        const ul = document.createElement("ul");
+        byLevel.get(lvl).forEach((sp) => {
+          const li = document.createElement("li");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "linklike";
+          btn.textContent = sp.name;
+          btn.addEventListener("click", () => openSpellModal(sp));
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        g.appendChild(ul);
+        spDiv.appendChild(g);
+      });
+    }
+    box.appendChild(spDiv);
 
+    // abilities: collapsed list of clickable feature names -> modal with full text
     const fwrap = document.createElement("details");
     fwrap.className = "sb-features";
     const fsum = document.createElement("summary");
@@ -284,21 +316,57 @@
     const ful = document.createElement("ul");
     sb.features.forEach((f) => {
       const li = document.createElement("li");
-      const b = document.createElement("b");
-      b.textContent = f.name + " (lv " + f.level + "). ";
-      li.appendChild(b);
-      li.appendChild(document.createTextNode(f.text));
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "linklike";
+      btn.textContent = f.name + " (lv " + f.level + ")";
+      btn.addEventListener("click", () => {
+        const p = document.createElement("p");
+        p.textContent = f.text;
+        window.openModal(f.name + " — level " + f.level, [p]);
+      });
+      li.appendChild(btn);
       ful.appendChild(li);
     });
     fwrap.appendChild(ful);
     box.appendChild(fwrap);
   }
 
+  const SPELL_SCHOOL = { A: "Abjuration", C: "Conjuration", D: "Divination", E: "Enchantment", EV: "Evocation", I: "Illusion", N: "Necromancy", T: "Transmutation" };
+
+  function openSpellModal(sp) {
+    const nodes = [];
+    const meta = document.createElement("p");
+    meta.className = "spell-meta";
+    meta.textContent = [sp.time, sp.range, sp.components, sp.duration].filter(Boolean).join(" · ");
+    nodes.push(meta);
+    const cl = document.createElement("p");
+    cl.className = "spell-classes";
+    cl.textContent = (sp.level === 0 ? "Cantrip" : ORDINAL[sp.level] + "-level") +
+      (SPELL_SCHOOL[sp.school] ? " · " + SPELL_SCHOOL[sp.school] : "") + " · Classes: " + sp.classes.join(", ");
+    nodes.push(cl);
+    const desc = document.createElement("div");
+    desc.className = "spell-desc";
+    sp.paras.forEach((p) => {
+      const pe = document.createElement("p");
+      pe.textContent = p;
+      desc.appendChild(pe);
+    });
+    nodes.push(desc);
+    if (sp.rolls && sp.rolls.length) {
+      const r = document.createElement("p");
+      r.className = "spell-rolls";
+      r.textContent = "Scaling: " + sp.rolls.map((x) => (sp.level === 0 ? "lvl " : "slot ") + (x.level === 0 ? "0" : ORDINAL[x.level]) + " → " + x.dice + " " + x.description).join("  ·  ");
+      nodes.push(r);
+    }
+    window.openModal(sp.name, nodes);
+  }
+
   /* ---------- generate ---------- */
   function generate() {
     const sp = selectedSpecies();
     const sex = selectedSex();
-    const lineage = sp.lineages ? $("npc-lineage").value : null;
+    const lineage = sp.lineages ? pick(sp.lineages) : null; // internal only (drives traits)
     const heightIn = sp.height.base + dice(sp.height.count, sp.height.dice);
     const weightLb = Math.max(15, Math.round(sp.weight.base + (heightIn - 60) * sp.weight.perInch + dice(2, 6)));
 
@@ -320,9 +388,9 @@
       const level = parseInt($("npc-level").value, 10) || 1;
       const cls = CLASSES.find((c) => c.id === $("npc-class").value) || CLASSES[0];
       current.statblock = buildStatBlock(sp.id, lineage, level, cls);
+      current.statblock.showSlots = $("npc-slots").checked;
     }
 
-    renderLineageOptions(sp);
     render();
   }
 
@@ -376,7 +444,7 @@
       const meta = document.createElement("div");
       meta.className = "roster-meta";
       meta.textContent =
-        (npc.species + (npc.lineage ? " · " + npc.lineage : "")) + " · " +
+        npc.species + " · " +
         (SEX_LABEL[npc.sex] || npc.sex) + " · " + fmtHeight(npc.heightIn) + " · " + fmtWeight(npc.weightLb) +
         (npc.statblock ? " · Lv" + npc.statblock.level + " " + npc.statblock.className : "");
       item.appendChild(top);
@@ -387,14 +455,13 @@
 
   function loadNPC(npc) {
     $("npc-species").value = npc.speciesId;
-    renderLineageOptions(DATA.SPECIES.find((s) => s.id === npc.speciesId));
-    if (npc.lineage) $("npc-lineage").value = npc.lineage;
     $("npc-sex").value = npc.sex;
     if (npc.statblock) {
       $("npc-leveled").checked = true;
       $("leveled-wrap").style.display = "";
       $("npc-level").value = String(npc.statblock.level);
       $("npc-class").value = npc.statblock.classId;
+      $("npc-slots").checked = !!npc.statblock.showSlots;
     } else {
       $("npc-leveled").checked = false;
       $("leveled-wrap").style.display = "none";
@@ -454,11 +521,9 @@
     DATA.SPECIES.forEach((s) => {
       const o = document.createElement("option");
       o.value = s.id;
-      o.textContent = s.name + (s.lineages ? " (" + s.lineages.length + " options)" : "");
+      o.textContent = s.name;
       spSel.appendChild(o);
     });
-    spSel.addEventListener("change", () => renderLineageOptions(spSel.value === "random" ? null : DATA.SPECIES.find((s) => s.id === spSel.value)));
-    renderLineageOptions(null);
 
     const lvlSel = $("npc-level");
     for (let i = 1; i <= 20; i++) {

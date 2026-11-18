@@ -497,5 +497,30 @@
     wizard:    { weapon: { name: "Dagger", dice: 1, sides: 4, type: "piercing", stat: "Dex" }, cantrip: { name: "Fire Bolt", dice: 1, sides: 10, type: "fire", stat: "Int" }, extraAttackAt: null, order: ["Int", "Con", "Dex", "Wis", "Cha", "Str"], ac: "light" }
   };
 
-  window.DM_DATA = { SPECIES, GENERIC_FEATURES, TABLES, LEVELS, VOICES, SPECIES_TRAITS, TIEFLING_RES, CLASS_COMBAT };
+  /* ---------- 2024 spell slot tables (full / half casters) + warlock pact slots ---------- */
+  // rows are per character level 1..20; entries are slots per slot-level 1..9
+  const SLOT_FULL = [
+    [2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],
+    [4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,1,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],
+    [4,3,3,3,1,0,0,0,0],[4,3,3,3,2,0,0,0,0],[4,3,3,3,2,1,0,0,0],[4,3,3,3,2,1,0,0,0],
+    [4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,0,0],[4,3,3,3,2,1,1,1,0],[4,3,3,3,2,1,1,1,0],
+    [4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1],[4,3,3,3,3,2,2,1,1]
+  ];
+  const SLOT_HALF = [
+    [2,0,0,0,0,0,0,0,0],[2,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0,0],
+    [4,2,0,0,0,0,0,0,0],[4,2,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],[4,3,0,0,0,0,0,0,0],
+    [4,3,2,0,0,0,0,0,0],[4,3,2,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],[4,3,3,0,0,0,0,0,0],
+    [4,3,3,2,0,0,0,0,0],[4,3,3,2,0,0,0,0,0],[4,3,3,3,0,0,0,0,0],[4,3,3,3,0,0,0,0,0],
+    [4,3,3,3,0,0,0,0,0],[4,3,3,3,0,0,0,0,0],[4,3,3,3,0,0,0,0,0],[4,3,3,3,0,0,0,0,0]
+  ];
+  // warlock pact magic: count per level 1..20 and slot level per level 1..20
+  const PACT_COUNT = [2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4];
+  const PACT_LEVEL = [1,1,2,2,3,3,4,4,5,5,5,5,5,5,5,5,5,5,5,5];
+  const CASTER_TYPE = {
+    bard: "full", cleric: "full", druid: "full", sorcerer: "full", wizard: "full",
+    paladin: "half", ranger: "half", warlock: "pact"
+  };
+  const SPELL_SLOTS = { full: SLOT_FULL, half: SLOT_HALF, pactCount: PACT_COUNT, pactLevel: PACT_LEVEL, casterType: CASTER_TYPE };
+
+  window.DM_DATA = { SPECIES, GENERIC_FEATURES, TABLES, LEVELS, VOICES, SPECIES_TRAITS, TIEFLING_RES, CLASS_COMBAT, SPELL_SLOTS };
 })();

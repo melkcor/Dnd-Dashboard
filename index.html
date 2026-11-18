@@ -60,9 +60,6 @@
         <label>Species (2024 PHB)
           <select id="npc-species"></select>
         </label>
-        <label id="lineage-wrap">Lineage / Ancestry
-          <select id="npc-lineage"></select>
-        </label>
         <label>Sex
           <select id="npc-sex">
             <option value="random">Random</option>
@@ -79,6 +76,7 @@
           <label>Class
             <select id="npc-class"></select>
           </label>
+          <label class="checkbox-label"><input type="checkbox" id="npc-slots"> Spell slot list</label>
         </div>
         <div class="btn-row">
           <button id="npc-generate" class="btn btn-gold btn-big">🎲 Generate NPC</button>
@@ -122,7 +120,7 @@
   <!-- ============ SPELLS ============ -->
   <section id="tab-spells" class="tab-panel" role="tabpanel">
     <div class="tables-head">
-      <p class="hint">Core 2024 spells from the compendium. Expand a spell, then use its <strong>level selector</strong> to see the effect at that level. <span id="spells-count" class="pill">0</span></p>
+      <p class="hint">Core 2024 spells from the compendium, grouped by spell level. Expand a level group, then a spell — each spell has a <strong>level selector</strong> to see the effect at that level. <span id="spells-count" class="pill">0</span></p>
       <input id="spells-filter" type="search" placeholder="Filter spells… (name, text, class)">
       <select id="spells-level-filter">
         <option value="">All levels</option>
@@ -145,6 +143,14 @@
     <div id="tables-grid" class="tables-grid"></div>
   </section>
 </main>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Details">
+    <button id="modal-close" class="modal-close" type="button" aria-label="Close">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
 <footer class="footer">
   <p>DM's Table · runs fully offline in your browser · presets &amp; NPCs are stored locally (localStorage). Rules reference: 2024 Player's Handbook / DMG / SRD 5.2.</p>
