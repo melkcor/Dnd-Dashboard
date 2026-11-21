@@ -98,6 +98,13 @@
   function buildStatBlock(speciesId, lineage, level, cls) {
     const cc = DATA.CLASS_COMBAT[cls.id];
     const scores = rollScores(cc.order);
+    // Level-driven ability increases: each "Ability Score Improvement" the class gains at or
+    // below this level adds +2 to the primary ability (cap 20); 19th level adds an Epic Boon (+1).
+    const primaryFull = cls.primary;
+    cls.features
+      .filter((f) => f.level <= level && /Ability Score Improvement/i.test(f.name))
+      .forEach(() => { scores[primaryFull] = Math.min(20, scores[primaryFull] + 2); });
+    if (level >= 19) scores[primaryFull] = Math.min(20, scores[primaryFull] + 1);
     const conMod = mod(scores.Constitution);
     const dexMod = mod(scores.Dexterity);
     const wisMod = mod(scores.Wisdom);
@@ -235,7 +242,7 @@
 
     const core = document.createElement("div");
     core.className = "sb-core";
-    core.textContent = "HP " + sb.hp + " · AC " + sb.ac + " · Speed " + sb.speed + " ft · Prof " + fmtMod(sb.prof) + " · Passive Perception " + sb.passivePerception;
+    core.textContent = "HP " + sb.hp + " · AC " + sb.ac + " · Speed " + sb.speed + " ft · Prof " + fmtMod(sb.prof) + " · Passive Perception " + sb.passivePerception + " · Hit Dice " + sb.level + "d" + sb.hd;
     box.appendChild(core);
 
     const line = (label, value) => {

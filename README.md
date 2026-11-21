@@ -37,8 +37,10 @@ For each NPC you get:
 - A free-text **DM notes** field
 
 **Leveled characters:** tick *Make a leveled character*, pick a **level (1–20)** and a **class**
-(12 core 2024 classes), and the NPC gets a **stat block**: rolled ability scores assigned by
-class priority, HP (2024 rules), AC by class, Speed, proficiency, saving throws, skills,
+(12 core 2024 classes), and the NPC gets a **stat block that scales with the level**: rolled
+ability scores assigned by class priority **plus Ability Score Improvements applied at each ASI
+level the class has up to that level** (+2 primary, cap 20; Epic Boon +1 at 19), HP (2024 rules),
+hit dice, AC by class, Speed, proficiency, saving throws, skills,
 species **resistances/traits**, **actions** (weapon attack, cantrip with level scaling, Extra
 Attack / Sneak Attack where relevant), and — extracted from the *Complete Compendium 5.5e* XML
 (`tools/build-classes.js` → `js/classes.js`):
@@ -63,6 +65,16 @@ compendium's per-level roll data: e.g. Fireball 3rd–9th, Fire Bolt character l
 Selecting a level rewrites the scaling text for that level ("Cast with a 5th-level slot:
 10d6 Fire Damage.").
 
+### 👹 Monsters
+A bestiary browser mirroring the NPC tab: **708 monsters** tagged 5.5e from the compendium
+(`tools/build-monsters.js` → `js/monsters-data.js`). Search by name/type, filter by **CR band**
+and **type**, or hit **🎲 Random Monster**. The card shows the full stat block — size/type/
+alignment, AC, HP (with formula), Speed, all six ability scores with modifiers, saves, skills,
+damage vulnerabilities/resistances/immunities, condition immunities, senses, languages, passive
+Perception, **CR + XP** — plus **Traits / Actions / Reactions / Legendary Actions** in collapsed
+lists whose names are clickable (popup with full text and attack rolls). A **DM notes** field and
+a saved-monster roster (localStorage + JSON export/import) work just like the NPC tab.
+
 ### 📜 DM Tables (5.5e reference)
 **Collapsed-by-default expandable** reference cards based on the **2024 rules (5.5e / SRD 5.2)**
 — click a card's title to expand it (expanding one doesn't resize the others); type in the
@@ -79,23 +91,25 @@ masteries, damage types, light & vision, and Heroic Inspiration.
   kept in IndexedDB (`dmDashSounds`).
 - Data files: `js/classes.js` and `js/spells-data.js` are generated from the Complete
   Compendium 5.5e XML by `tools/build-classes.js` / `tools/build-spells.js`.
-- Persistence: `localStorage` keys `dmDash.soundPresets.v1` and `dmDash.npcRoster.v1`.
+- Persistence: `localStorage` keys `dmDash.soundPresets.v1`, `dmDash.npcRoster.v1`, `dmDash.monsterRoster.v1`; custom sound files in IndexedDB (`dmDashSounds`).
 
 ## Project layout
 
 ```
-index.html            page shell + four tab panels
+index.html            page shell + five tab panels
 css/styles.css        arcane-night theme, vertical sliders (25% snap + ticks), stat block
 js/data.js            2024 species/names/voices/features + 5.5e table data
-js/classes.js         GENERATED: 12 core 2024 classes with per-level features
+js/classes.js         GENERATED: 12 core 2024 classes with per-level features (incl. ASI)
 js/spells-data.js     GENERATED: 455 core 2024 spells with per-level scaling
+js/monsters-data.js   GENERATED: 708 bestiary monsters with full stat blocks
 js/soundboard.js      audio-file playback + synth fallback, sliders, presets, custom files
 js/npc.js             NPC generator + stat blocks + saved roster
-js/spellbook.js       spells tab (expandable cards, level selector, filters)
+js/spellbook.js       spells tab (level-grouped expandable cards, level selector, filters)
+js/monsters.js        monster browser + stat blocks + saved roster
 js/tables.js          reference-table renderer + filter
 js/app.js             tab switching / boot
 sounds/*.wav          real ambience loops (generated)
-tools/                render-sounds.js, build-classes.js, build-spells.js
+tools/                render-sounds.js, build-classes.js, build-spells.js, build-monsters.js
 ```
 
 ## Rules sources

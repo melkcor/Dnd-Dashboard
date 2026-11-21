@@ -563,3 +563,8 @@ label select, label input { margin-top: 4px; }
 .sb-spell-group > strong { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 .sb-spell-group ul { margin: 2px 0 0; padding-left: 18px; columns: 2; }
 .sb-spell-group li { margin: 2px 0; break-inside: avoid; }
+
+/* ---------- monsters tab ---------- */
+#mon-list { max-height: 300px; }
+#mon-sub { margin: 4px 0 0; font-size: 14px; }
+#mon-lines { margin-top: 8px; }

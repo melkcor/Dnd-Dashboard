@@ -41,6 +41,7 @@
     window.Soundboard.init();
     window.NPCGen.init();
     window.Spellbook.init();
+    window.Monsters.init();
     window.Tables.init();
   }
 

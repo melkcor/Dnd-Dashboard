@@ -52,11 +52,11 @@ function extractClass(name) {
     let f;
     while ((f = fRe.exec(body))) {
       const attrs = f[1], fbody = f[2];
-      if (/optional="YES"/.test(attrs)) continue;
       const nameM = fbody.match(/<name>([^<]+)<\/name>/);
       if (!nameM) continue;
       let fname = clean(nameM[1]);
       if (/subclass/i.test(fname)) continue;
+      if (/optional="YES"/.test(attrs) && !/Ability Score Improvement/i.test(fname)) continue;
       const texts = [...fbody.matchAll(/<text>([\s\S]*?)<\/text>/g)].map(t => clean(t[1]));
       let text = texts.join(" ").replace(/\s+/g, " ").trim();
       if (text.length > MAX_TEXT) text = text.slice(0, MAX_TEXT).trim() + "…";

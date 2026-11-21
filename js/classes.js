@@ -54,6 +54,11 @@ window.DM_CLASSES = [
     "text": "You gain proficiency in another skill of your choice from the skill list available to Barbarians at level 1. In addition, while your Rage is active, you can channel primal power when you attempt certain tasks; whenever you make an ability check using one of the following skills, you can make it as a Strength check even if it normally uses a different ability: Acrobatics, Intimidation, Perception, Stealth, or Survival. When you use this ability, your Strength represents primal power coursing through you, honing your…"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Barbarian levels 8, 12, and 16. Source: Player's Handbook (2024) p. 53"
+   },
+   {
     "level": 5,
     "name": "Extra Attack",
     "text": "You can attack twice instead of once whenever you take the Attack action on your turn. Source: Player's Handbook (2024) p. 53"
@@ -74,6 +79,11 @@ window.DM_CLASSES = [
     "text": "As part of the Bonus Action you take to enter your Rage, you can move up to half your Speed. Source: Player's Handbook (2024) p. 53"
    },
    {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Barbarian levels 8, 12, and 16. Source: Player's Handbook (2024) p. 53"
+   },
+   {
     "level": 9,
     "name": "Brutal Strike",
     "text": "If you use Reckless Attack, you can forgo any Advantage on one Strength-based attack roll of your choice on your turn. The chosen attack roll mustn't have Disadvantage. If the chosen attack roll hits, the target takes an extra 1d10 damage of the same type dealt by the weapon or Unarmed Strike, and you can cause one Brutal Strike effect of your choice. You have the following effect options. Forceful Blow. The target is pushed 15 feet straight away from you. You can then move up to half your Speed straight toward the…"
@@ -84,6 +94,11 @@ window.DM_CLASSES = [
     "text": "Your Rage can keep you fighting despite grievous wounds. If you drop to 0 Hit Points while your Rage is active and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, your Hit Points instead change to a number equal to twice your Barbarian level. Each time you use this feature after the first, the DC increases by 5. When you finish a Short or Long Rest, the DC resets to 10. Source: Player's Handbook (2024) p. 53"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Barbarian levels 8, 12, and 16. Source: Player's Handbook (2024) p. 53"
+   },
+   {
     "level": 13,
     "name": "Improved Brutal Strike",
     "text": "You have honed new ways to attack furiously. The following effects are now among your Brutal Strike options. Staggering Blow. The target has Disadvantage on the next saving throw it makes, and it can't make Opportunity Attacks until the start of your next turn. Sundering Blow. Before the start of your next turn, the next attack roll made by another creature against the target gains a +5 bonus to the roll. An attack roll can gain only one Sundering Blow bonus. Source: Player's Handbook (2024) p. 53"
@@ -92,6 +107,11 @@ window.DM_CLASSES = [
     "level": 15,
     "name": "Persistent Rage",
     "text": "When you roll Initiative, you can regain all expended uses of Rage. After you regain uses of Rage in this way, you can't do so again until you finish a Long Rest. In addition, your Rage is so fierce that it now lasts for 10 minutes without you needing to do anything to extend it from round to round. Your Rage ends early if you have the Unconscious condition (not just the Incapacitated condition) or don Heavy armor. Source: Player's Handbook (2024) p. 53"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Barbarian levels 8, 12, and 16. Source: Player's Handbook (2024) p. 53"
    },
    {
     "level": 17,
@@ -170,6 +190,11 @@ window.DM_CLASSES = [
     "text": "You can add half your Proficiency Bonus (round down) to any ability check you make that uses a skill proficiency you lack and that doesn't otherwise use your Proficiency Bonus. For example, if you make a Strength (Athletics) check and lack Athletics proficiency, you can add half your Proficiency Bonus to the check. Source: Player's Handbook (2024) p. 60"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Bard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 61"
+   },
+   {
     "level": 5,
     "name": "Font of Inspiration",
     "text": "You now regain all your expended uses of Bardic Inspiration when you finish a Short or Long Rest. In addition, you can expend a spell slot (no action required) to regain one expended use of Bardic Inspiration. Source: Player's Handbook (2024) p. 61"
@@ -180,9 +205,24 @@ window.DM_CLASSES = [
     "text": "You can use musical notes or words of power to disrupt mind-influencing effects. If you or a creature within 30 feet of you fails a saving throw against an effect that applies the Charmed or Frightened condition, you can take a Reaction to cause the save to be rerolled, and the new roll has Advantage. Source: Player's Handbook (2024) p. 61"
    },
    {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Bard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 61"
+   },
+   {
     "level": 10,
     "name": "Magical Secrets",
     "text": "You've learned secrets from various magical traditions. Whenever you reach a Bard level (including this level) and the Prepared Spells number in the Bard Features table increases, you can choose any of your new prepared spells from the Bard, Cleric, Druid, and Wizard spell lists, and the chosen spells count as Bard spells for you (see a class's section for its spell list). In addition, whenever you replace a spell prepared for this class, you can replace it with a spell from those lists. Source: Player's Handbook (…"
+   },
+   {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Bard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 61"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Bard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 61"
    },
    {
     "level": 18,
@@ -248,6 +288,11 @@ window.DM_CLASSES = [
     "text": "As a Magic action, you present your Holy Symbol and censure Undead creatures. Each Undead of your choice within 30 feet of you must make a Wisdom saving throw. If the creature fails its save, it has the Frightened and Incapacitated conditions for 1 minute. For that duration, it tries to move as far from you as it can on its turns. Th is effect ends early on the creature if it takes any damage, if you have the Incapacitated condition, or if you die. Source: Player's Handbook (2024) p. 70"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Cleric levels 8, 12, and 16. Source: Player's Handbook (2024) p. 71"
+   },
+   {
     "level": 5,
     "name": "Sear Undead",
     "text": "Whenever you use Turn Undead, you can roll a number of d8s equal to your Wisdom modifier (minimum of 1d8) and add the rolls together. Each Undead that fails its saving throw against that use of Turn Undead takes Radiant damage equal to the roll's total. This damage doesn't end the turn effect. Source: Player's Handbook (2024) p. 71"
@@ -258,14 +303,29 @@ window.DM_CLASSES = [
     "text": "Divine power infuses you in battle. You gain one of the following options of your choice (if you get either option from a Cleric subclass in an older book, use only the option you choose for this feature). Source: Player's Handbook (2024) p. 71"
    },
    {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Cleric levels 8, 12, and 16. Source: Player's Handbook (2024) p. 71"
+   },
+   {
     "level": 10,
     "name": "Divine Intervention",
     "text": "You can call on your deity or pantheon to intervene on your behalf. As a Magic action, choose any Cleric spell of level 5 or lower that doesn't require a Reaction to cast. As part of the same action, you cast that spell without expending a spell slot or needing Material components. You can't use this feature again until you finish a Long Rest. Source: Player's Handbook (2024) p. 71"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Cleric levels 8, 12, and 16. Source: Player's Handbook (2024) p. 71"
+   },
+   {
     "level": 14,
     "name": "Improved Blessed Strikes",
     "text": "The option you chose for Blessed Strikes grows more powerful. Source: Player's Handbook (2024) p. 71"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Cleric levels 8, 12, and 16. Source: Player's Handbook (2024) p. 71"
    },
    {
     "level": 19,
@@ -329,6 +389,11 @@ window.DM_CLASSES = [
     "text": "You can summon a nature spirit that assumes an animal form to aid you. As a Magic action, you can expend a spell slot or a use of Wild Shape to cast the Find Familiar spell without Material components. When you cast the spell in this way, the familiar is Fey and disappears when you finish a Long Rest. Source: Player's Handbook (2024) p. 81"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Druid levels 8, 12, and 16. Source: Player's Handbook (2024) p. 81"
+   },
+   {
     "level": 5,
     "name": "Wild Resurgence",
     "text": "Once on each of your turns, if you have no uses of Wild Shape left, you can give yourself one use by expending a spell slot (no action required). In addition, you can expend one use of Wild Shape (no action required) to give yourself a level 1 spell slot, but you can't do so again until you finish a Long Rest. Source: Player's Handbook (2024) p. 81"
@@ -339,9 +404,24 @@ window.DM_CLASSES = [
     "text": "The might of the elements flows through you. You gain one of the following options of your choice. Source: Player's Handbook (2024) p. 81"
    },
    {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Druid levels 8, 12, and 16. Source: Player's Handbook (2024) p. 81"
+   },
+   {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Druid levels 8, 12, and 16. Source: Player's Handbook (2024) p. 81"
+   },
+   {
     "level": 15,
     "name": "Improved Elemental Fury",
     "text": "The option you chose for Elemental Fury grows more powerful, as detailed below. Potent Spellcasting. When you cast a Druid cantrip with a range of 10 feet or greater, the spell's range increases by 300 feet. Primal Strike. The extra damage of your Primal Strike increases to 2d8. Source: Player's Handbook (2024) p. 81"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Druid levels 8, 12, and 16. Source: Player's Handbook (2024) p. 81"
    },
    {
     "level": 18,
@@ -411,6 +491,11 @@ window.DM_CLASSES = [
     "text": "You have a mind for tactics on and off the battlefield. When you fail an ability check, you can expend a use of your Second Wind to push yourself toward success. Rather than regaining Hit Points, you roll 1d10 and add the number rolled to the ability check, potentially turning it into a success. If the check still fails. this use of Second Wind isn't expended. Source: Player's Handbook (2024) p. 91"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16. Source: Player's Handbook (2024) p. 92"
+   },
+   {
     "level": 5,
     "name": "Extra Attack",
     "text": "You can attack twice instead of once whenever you take the Attack action on your turn. Source: Player's Handbook (2024) p. 92"
@@ -419,6 +504,16 @@ window.DM_CLASSES = [
     "level": 5,
     "name": "Tactical Shift",
     "text": "Whenever you activate your Second Wind with a Bonus Action, you can move up to half your Speed without provoking Opportunity Attacks. Source: Player's Handbook (2024) p. 92"
+   },
+   {
+    "level": 6,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16. Source: Player's Handbook (2024) p. 92"
+   },
+   {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16. Source: Player's Handbook (2024) p. 92"
    },
    {
     "level": 9,
@@ -436,9 +531,24 @@ window.DM_CLASSES = [
     "text": "You can attack three times instead of once whenever you take the Attack action on your turn. Source: Player's Handbook (2024) p. 92"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16. Source: Player's Handbook (2024) p. 92"
+   },
+   {
     "level": 13,
     "name": "Studied Attacks",
     "text": "You study your opponents and learn from each attack you make. If you make an attack roll against a creature and miss, you have Advantage on your next attack roll against that creature before the end of your next turn. Source: Player's Handbook (2024) p. 92"
+   },
+   {
+    "level": 14,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16. Source: Player's Handbook (2024) p. 92"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16. Source: Player's Handbook (2024) p. 92"
    },
    {
     "level": 19,
@@ -506,6 +616,11 @@ window.DM_CLASSES = [
    },
    {
     "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Monk levels 8, 12, and 16. Source: Player's Handbook (2024) p. 103"
+   },
+   {
+    "level": 4,
     "name": "Slow Fall",
     "text": "You can take a Reaction when you fall to reduce any damage you take from the fall by an amount equal to five times your Monk level. Source: Player's Handbook (2024) p. 103"
    },
@@ -530,6 +645,11 @@ window.DM_CLASSES = [
     "text": "When you're subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw and only half damage if you fail. You don't benefit from this feature if you have the Incapacitated condition. Source: Player's Handbook (2024) p. 103"
    },
    {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Monk levels 8, 12, and 16. Source: Player's Handbook (2024) p. 103"
+   },
+   {
     "level": 9,
     "name": "Acrobatic Movement",
     "text": "While you aren't wearing armor or wielding a Shield, you gain the ability to move along vertical surfaces and across liquids on your turn without falling during the movement. Source: Player's Handbook (2024) p. 103"
@@ -545,6 +665,11 @@ window.DM_CLASSES = [
     "text": "Through sheer force of will, you can remove one of the following conditions from yourself at the end of each of your turns: Charmed, Frightened, or Poisoned. In addition, forgoing food and drink doesn't give you levels of Exhaustion. Source: Player's Handbook (2024) p. 103"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Monk levels 8, 12, and 16. Source: Player's Handbook (2024) p. 103"
+   },
+   {
     "level": 13,
     "name": "Deflect Energy",
     "text": "You can now use your Deflect Attacks feature against attacks that deal any damage type, not just Bludgeoning, Piercing, or Slashing. Source: Player's Handbook (2024) p. 103"
@@ -558,6 +683,11 @@ window.DM_CLASSES = [
     "level": 15,
     "name": "Perfect Focus",
     "text": "When you roll Initiative and don't use Uncanny Metabolism, you regain expended Focus Points until you have 4 if you have 3 or fewer. Source: Player's Handbook (2024) p. 103"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Monk levels 8, 12, and 16. Source: Player's Handbook (2024) p. 103"
    },
    {
     "level": 18,
@@ -634,6 +764,11 @@ window.DM_CLASSES = [
     "text": "As a Bonus Action, you can open your awareness to detect Celestials, Fiends, and Undead. For the next 10 minutes or until you have the Incapacitated condition, you know the location of any creature of those types within 60 feet of yourself, and you know its creature type. Within the same radius, you also detect the presence of any place or object that has been consecrated or desecrated, as with the Hallow spell. Source: Player's Handbook (2024) p. 110"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Paladin levels 8, 12, and 16. Source: Player's Handbook (2024) p. 111"
+   },
+   {
     "level": 5,
     "name": "Extra Attack",
     "text": "You can attack twice instead of once whenever you take the Attack action on your turn. Source: Player's Handbook (2024) p. 111"
@@ -647,6 +782,11 @@ window.DM_CLASSES = [
     "level": 6,
     "name": "Aura of Protection",
     "text": "You radiate a protective, unseeable aura in a 10-foot Emanation that originates from you. The aura is inactive while you have the Incapacitated condition. You and your allies in the aura gain a bonus to saving throws equal to your Charisma modifier (minimum bonus of +1). If another Paladin is present, a creature can benefit from only one Aura of Protection at a time; the creature chooses which aura while in them. Source: Player's Handbook (2024) p. 111"
+   },
+   {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Paladin levels 8, 12, and 16. Source: Player's Handbook (2024) p. 111"
    },
    {
     "level": 9,
@@ -664,9 +804,19 @@ window.DM_CLASSES = [
     "text": "Your strikes now carry supernatural power. When you hit a target with an attack roll using a Melee weapon or an Unarmed Strike, the target takes an extra 1d8 Radiant damage. Source: Player's Handbook (2024) p. 111"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Paladin levels 8, 12, and 16. Source: Player's Handbook (2024) p. 111"
+   },
+   {
     "level": 14,
     "name": "Restoring Touch",
     "text": "When you use Lay On Hands on a creature. you can also remove one or more of the following conditions from the creature: Blinded, Charmed, Deafened, Frightened, Paralyzed, or Stunned. You must expend 5 Hit Points from the healing pool of Lay On Hands for each of these conditions you remove; those points don't also restore Hit Points to the creature. Source: Player's Handbook (2024) p. 111"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Paladin levels 8, 12, and 16. Source: Player's Handbook (2024) p. 111"
    },
    {
     "level": 18,
@@ -730,6 +880,11 @@ window.DM_CLASSES = [
     "text": "You gain a Fighting Style feat of your choice (see chapter 5, added as feats). Instead of choosing one of those feats, you can choose the option below. Druidic Warrior. You learn two Druid cantrips of your choice (see the Druid class's section for a list of Druid spells). Guidance and Starry Wisp are recommended. The chosen cantrips count as Ranger spells for you, and Wisdom is your spellcasting ability for them. Whenever you gain a Ranger level, you can replace one of these cantrips with another Druid cantrip. Sou…"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Ranger levels 8, 12, and 16. Source: Player's Handbook (2024) p. 120"
+   },
+   {
     "level": 5,
     "name": "Extra Attack",
     "text": "You can attack twice instead of once whenever you take the Attack action on your turn. Source: Player's Handbook (2024) p. 120"
@@ -738,6 +893,11 @@ window.DM_CLASSES = [
     "level": 6,
     "name": "Roving",
     "text": "Your Speed increases by 10 feet while you aren't wearing Heavy armor. You also have a Climb Speed and a Swim Speed equal to your Speed. Source: Player's Handbook (2024) p. 121"
+   },
+   {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Ranger levels 8, 12, and 16. Source: Player's Handbook (2024) p. 120"
    },
    {
     "level": 9,
@@ -750,6 +910,11 @@ window.DM_CLASSES = [
     "text": "Primal forces now help fuel you on your journeys, granting you the following benefits. Temporary Hit Points. As a Magic action, you can give yourself a number of Temporary Hit Points equal to 1d8 plus your Wisdom modifier (minimum of 1). You can use this action a number of times equal to your Wisdom modifier (minimum of once), and you regain a ll expended uses when you finish a Long Rest. Decrease Exhaustion. Whenever you finish a Short Rest, your Exhaustion level, if any, decreases by 1. Source: Player's Handbook…"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Ranger levels 8, 12, and 16. Source: Player's Handbook (2024) p. 120"
+   },
+   {
     "level": 13,
     "name": "Relentless Hunter",
     "text": "Taking damage can't break your Concentration on Hunter's Mark. Source: Player's Handbook (2024) p. 121"
@@ -758,6 +923,11 @@ window.DM_CLASSES = [
     "level": 14,
     "name": "Nature's Veil",
     "text": "You invoke spirits of nature to magically hide yourself. As a Bonus Action, you can give yourself the Invisible condition until the end of your next turn. You can use this feature a number of times equal to your Wisdom modifier (minimum of once), and you regain a ll expended uses when you finish a Long Rest. Source: Player's Handbook (2024) p. 121"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Ranger levels 8, 12, and 16. Source: Player's Handbook (2024) p. 120"
    },
    {
     "level": 17,
@@ -839,6 +1009,11 @@ window.DM_CLASSES = [
     "text": "As a Bonus Action, you give yourself Advantage on your next attack roll on the current turn. You can use this feature only if you haven't moved during this turn, and after you use it, your Speed is 0 until the end of the current turn. Source: Player's Handbook (2024) p. 130"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Rogue levels 8, 10, 12, and 16. Source: Player's Handbook (2024) p. 130"
+   },
+   {
     "level": 5,
     "name": "Cunning Strike",
     "text": "You've developed cunning ways to use your Sneak Attack. When you deal Sneak Attack damage, you can add one of the following Cunning Strike effects. Each effect has a die cost, which is the number of Sneak Attack damage dice you must forgo to add the effect. You remove the die before rolling, and the effect occurs immediately after the attack's damage is dealt. For example, if you add the Poison effect, remove 1d6 from the Sneak Attack's damage before rolling. If a Cunning Strike effect requires a saving throw, the…"
@@ -864,9 +1039,24 @@ window.DM_CLASSES = [
     "text": "Whenever you make an ability check that uses one of your skill or tool proficiencies, you can treat a d20 roll of 9 or lower as a 10. Source: Player's Handbook (2024) p. 131"
    },
    {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Rogue levels 8, 10, 12, and 16. Source: Player's Handbook (2024) p. 130"
+   },
+   {
+    "level": 10,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Rogue levels 8, 10, 12, and 16. Source: Player's Handbook (2024) p. 130"
+   },
+   {
     "level": 11,
     "name": "Improved Cunning Strike",
     "text": "You can use up to two Cunning Strike effects when you deal Sneak Attack damage, paying the die cost for each effect. Source: Player's Handbook (2024) p. 131"
+   },
+   {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Rogue levels 8, 10, 12, and 16. Source: Player's Handbook (2024) p. 130"
    },
    {
     "level": 14,
@@ -877,6 +1067,11 @@ window.DM_CLASSES = [
     "level": 15,
     "name": "Slippery Mind",
     "text": "Your cunning mind is exceptionally difficult to control. You gain proficiency in Wisdom and Charisma saving throws. Source: Player's Handbook (2024) p. 131"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Rogue levels 8, 10, 12, and 16. Source: Player's Handbook (2024) p. 130"
    },
    {
     "level": 18,
@@ -938,6 +1133,11 @@ window.DM_CLASSES = [
     "text": "Because your magic flows from within, you can alter your spells to suit your needs; you gain two Meta magic options of your choice from \"Metamagic Options\" later in this class's description (added as spells in the Metamagic Options spell list). You use the chosen options to temporarily modify spells you cast. To use an option, you must spend the number of Sorcery Points that it costs. You can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options. Whenever you gain…"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Sorcerer levels 8, 12, and 16. Source: Player's Handbook (2024) p. 141"
+   },
+   {
     "level": 5,
     "name": "Sorcerous Restoration",
     "text": "When you finish a Short Rest, you can regain expended Sorcery Points, but no more than a number equal to half your Sorcerer level (round down). Once you use this feature, you can't do so again until you finish a Long Rest. Source: Player's Handbook (2024) p. 141"
@@ -946,6 +1146,21 @@ window.DM_CLASSES = [
     "level": 7,
     "name": "Sorcery Incarnate",
     "text": "If you have no uses of Innate Sorcery left, you can use it if you spend 2 Sorcery Points when you take the Bonus Action to activate it. In addition, while your Innate Sorcery feature is active, you can use up to two of your Metamagic options on each spell you cast. Source: Player's Handbook (2024) p. 141"
+   },
+   {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Sorcerer levels 8, 12, and 16. Source: Player's Handbook (2024) p. 141"
+   },
+   {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Sorcerer levels 8, 12, and 16. Source: Player's Handbook (2024) p. 141"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Sorcerer levels 8, 12, and 16. Source: Player's Handbook (2024) p. 141"
    },
    {
     "level": 19,
@@ -998,6 +1213,16 @@ window.DM_CLASSES = [
     "text": "You can perform an esoteric rite for 1 minute. At the end of it, you regain expended Pact Magic spell slots but no more than a number equal to half your maximum (round up). Once you use this feature, you can't do so again until you finish a Long Rest. Source: Player's Handbook (2024) p. 154"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Warlock levels 8, 12, and 16. Source: Player's Handbook (2024) p. 155"
+   },
+   {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Warlock levels 8, 12, and 16. Source: Player's Handbook (2024) p. 155"
+   },
+   {
     "level": 9,
     "name": "Contact Patron",
     "text": "In the past, you usually contacted your patron through intermediaries. Now you can communicate directly; you always have the Contact Other Plane spell prepared. With this feature, you can cast the spell without expending a spell slot to contact your patron, and you automatically succeed on the spell's saving throw. Once you cast the spell with this feature, you can't do so in this way again until you finish a Long Rest. Source: Player's Handbook (2024) p. 155"
@@ -1008,6 +1233,11 @@ window.DM_CLASSES = [
     "text": "Your patron grants you a magical secret called an arcanum. Choose one level 6 Warlock spell as this arcanum. You can cast your arcanum spell once without expending a spell slot, and you must finish a Long Rest before you can cast it in this way again. As shown in the Warlock Features table, you gain another Warlock spell of your choice that can be cast in this way when you reach Warlock levels 13 (level 7 spell), 15 (level 8 spell), and 17 (level 9 spell). You regain all uses of your Mystic Arcanum when you finish…"
    },
    {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Warlock levels 8, 12, and 16. Source: Player's Handbook (2024) p. 155"
+   },
+   {
     "level": 13,
     "name": "Mystic Arcanum",
     "text": "Your patron grants you a magical secret called an arcanum. Choose one level 7 Warlock spell as this arcanum. You can cast your arcanum spell once without expending a spell slot, and you must finish a Long Rest before you can cast it in this way again. Whenever you gain a Warlock level, you can replace one of your arcanum spells with another Warlock spell of the same level. Source: Player's Handbook (2024) p. 155"
@@ -1016,6 +1246,11 @@ window.DM_CLASSES = [
     "level": 15,
     "name": "Mystic Arcanum",
     "text": "Your patron grants you a magical secret called an arcanum. Choose one level 8 Warlock spell as this arcanum. You can cast your arcanum spell once without expending a spell slot, and you must finish a Long Rest before you can cast it in this way again. Whenever you gain a Warlock level, you can replace one of your arcanum spells with another Warlock spell of the same level. Source: Player's Handbook (2024) p. 155"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Warlock levels 8, 12, and 16. Source: Player's Handbook (2024) p. 155"
    },
    {
     "level": 17,
@@ -1083,9 +1318,29 @@ window.DM_CLASSES = [
     "text": "While studying magic, you also specialized in another field of study. Choose one of the following skills in which you have proficiency: Arcana, History, Investigation, Medicine, Nature, or Religion. You have Expertise in the chosen skill. Source: Player's Handbook (2024) p. 166"
    },
    {
+    "level": 4,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Wizard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 167"
+   },
+   {
     "level": 5,
     "name": "Memorize Spell",
     "text": "Whenever you finish a Short Rest, you can study your spell book and replace one of the level 1+ Wizard spells you have prepared for your Spellcasting feature with another level 1+ spell from the book. Source: Player's Handbook (2024) p. 167"
+   },
+   {
+    "level": 8,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Wizard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 167"
+   },
+   {
+    "level": 12,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Wizard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 167"
+   },
+   {
+    "level": 16,
+    "name": "Ability Score Improvement",
+    "text": "You gain the Ability Score Improvement feat (see chapter 5) or another feat of your choice for which you qualify. You gain this feature again at Wizard levels 8, 12, and 16. Source: Player's Handbook (2024) p. 167"
    },
    {
     "level": 18,
